@@ -1,7 +1,7 @@
 QT       += core
 QT       -= gui
 CONFIG += c++11
-TARGET = AbstractModel
+TARGET = AbstractModule
 TEMPLATE = lib
 DESTDIR = ../../../bin/abstract/lib/module
 OBJECTS_DIR = ../../../output/AbstractModel
