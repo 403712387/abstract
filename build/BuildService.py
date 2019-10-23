@@ -174,7 +174,7 @@ def copyDataFile():
     global serviceName
 
     sourceDir = "../data"
-    destinationDir = "../src/bin/" + serviceName
+    destinationDir = "../src/bin/" + serviceName + "/data"
     copyFiles(sourceDir, destinationDir)
 
 #处理启动脚本中的库的路径
