@@ -169,6 +169,14 @@ def copyConfigFile():
     copyFiles(sourceFile, destinationDir)
     os.remove(sourceFile)
 
+#拷贝模型文件
+def copyDataFile():
+    global serviceName
+
+    sourceDir = "../data"
+    destinationDir = "../src/bin/" + serviceName
+    copyFiles(sourceDir, destinationDir)
+
 #处理启动脚本中的库的路径
 def processStartScript():
     global serviceName
@@ -339,6 +347,7 @@ def buildService():
     #拷贝文件
     copyThirdpartyLibrarys()
     copyConfigFile()
+    copyDataFile()
 
     #处理启动脚本中
     processStartScript()
