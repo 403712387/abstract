@@ -1,0 +1,15 @@
+TEMPLATE = subdirs
+CONFIG  += ordered
+
+SUBDIRS += \
+        ./module/base/Common/Common.pro \
+        ./module/base/CoreModule/CoreModule.pro \
+        ./module/base/HttpModule/HttpModule.pro \
+        ./module/base/TrackModule/TrackModule.pro \
+        ./module/base/TestModule/TestModule.pro \
+        ./module/base/ChooseBestModule/ChooseBestModule.pro \
+        ./module/base/FFmpegIngestModule/FFmpegIngestModule.pro \
+        ./module/base/ServiceStatusModule/ServiceStatusModule.pro \
+        ./module/base/ConfigureModule/ConfigureModule.pro \
+        ./module/business/AbstractModule/AbstractModule.pro \
+        ./service/abstract/abstract.pro
