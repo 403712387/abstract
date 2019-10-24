@@ -15,6 +15,7 @@
 // 人脸检测
 void fastFaceDetect()
 {
+    const std::string mClassName = "fastFaceDetect";
     std::string sourctPath = "/data/mars/picdata/background";
     std::string outputPath = "/data/mars/picdata/background_fastface/";
     Common::createPath(outputPath);
@@ -35,7 +36,7 @@ void fastFaceDetect()
         std::string outputFile = outputPath + fileInfo.fileName().toStdString();
 
         // 人脸检测
-        cv::Mat image = imread(fileName);
+        cv::Mat image = cv::imread(fileName);
         QDateTime beginTime = QDateTime::currentDateTime();
         pResults = facedetect_cnn(pBuffer, (unsigned char*)(image.ptr(0)), image.cols, image.rows, (int)image.step);
         QDateTime endTime = QDateTime::currentDateTime();
