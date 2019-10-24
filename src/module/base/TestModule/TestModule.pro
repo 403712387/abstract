@@ -22,6 +22,7 @@ INCLUDEPATH += ./src \
             ../Common/src/message \
             ../CoreModule/src \
             ../../../../thirdparty/include \
+            ../../../../thirdparty/include/Qt \
             ../../../../thirdparty/include/openCV
 win32 {
 LIBS += -L../../../bin/abstract/lib/module -lCommon -lCoreModule -lTrackModule \

@@ -1,8 +1,16 @@
 #include "faceSample.h"
 #include "qualitySample.h"
 #include "trackingSample.h"
+#include "EyeDetect.h"
+#include "FaceDetect.h"
 int main(int argc, char *argv[])
 {
+    // 人脸检测
+    faceDetect();
+
+    // 人眼检测
+    eyeDetect();
+#if 0
     // 人脸检测
     return facemarkDemoAAM(argc, argv);
     return facemarkDemoLBF(argc, argv);
@@ -35,4 +43,5 @@ int main(int argc, char *argv[])
     return TotoriaIntroduction(argc, argv);
     return TotorialMultiTracker(argc, argv);
     return trackByMaching(argc, argv);
+#endif
 }
