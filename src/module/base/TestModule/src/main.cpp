@@ -3,13 +3,17 @@
 #include "trackingSample.h"
 #include "EyeDetect.h"
 #include "FaceDetect.h"
+#include "FastFaceDetect.h"
 int main(int argc, char *argv[])
 {
     // 人脸检测
-    faceDetect();
+    //faceDetect();
 
     // 人眼检测
-    eyeDetect();
+    //eyeDetect();
+
+    // 快速人脸检测
+    fastFaceDetect();
 #if 0
     // 人脸检测
     return facemarkDemoAAM(argc, argv);
