@@ -17,7 +17,7 @@ void faceDetect()
     Common::createPath(outputPath);
 
     // 加载模型
-    std::string cascadeName = "./data/haarcascades/haarcascade_frontalface_alt.xml";
+    std::string cascadeName = "./data/haarcascades/haarcascade_frontalface_alt2.xml";
     cv::CascadeClassifier cascade;
     if (!cascade.load(cv::samples::findFile(cascadeName)))
     {

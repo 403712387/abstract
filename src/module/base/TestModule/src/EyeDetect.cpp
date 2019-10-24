@@ -61,4 +61,5 @@ void eyeDetect()
         param.push_back(85);
         cv::imwrite(outputFile, image, param);
     }
+     LOG_I(mClassName, "total image:" << imageCount << ", total spend time:" << totalTime << "ms, avg:" << totalTime/imageCount << "ms");
 }
