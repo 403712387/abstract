@@ -25,20 +25,10 @@ using namespace cv;
 
 int KCFTest( int argc, char** argv ){
     const std::string mClassName = "KCF";
-  // show help
-  if(argc<2){
-    cout<<
-      " Usage: example_tracking_kcf <video_name>\n"
-      " examples:\n"
-      " example_tracking_kcf Bolt/img/%04.jpg\n"
-      " example_tracking_kcf faceocc2.webm\n"
-      << endl;
-    return 0;
-  }
 
   // create the tracker
   Ptr<Tracker> tracker = TrackerKCF::create();
-
+#if 0
   // set input video
   std::string video = argv[1];
   VideoCapture cap(video);
@@ -47,13 +37,15 @@ int KCFTest( int argc, char** argv ){
 
   // get bounding box
   cap >> frame;
-#if 0
   Rect2d roi= selectROI("tracker", frame, true, false);
 
   //quit if ROI was not selected
   if(roi.width==0 || roi.height==0)
     return 0;
 #else
+  int index = 1;
+  const std::string inputPath = "/data/mars/picdata/pedestrian/";
+  Mat frame = cv::imread(inputPath + std::to_string(index) + ".jpg");
   Rect2d roi = {827,553,40,30};
 #endif
   // initialize the tracker
@@ -63,9 +55,9 @@ int KCFTest( int argc, char** argv ){
   long long totalTime = 0;
   int imageCount = 0;
   printf("Start the tracking process, press ESC to quit.\n");
-  for ( ;; ){
+  for ( int i = 0; i < 3000; ++i ){
     // get frame from the video
-    cap >> frame;
+    frame = cv::imread(inputPath + std::to_string(index) + ".jpg");
 
     // stop the program if no more images
     if(frame.rows==0 || frame.cols==0)
@@ -94,7 +86,6 @@ int KCFTest( int argc, char** argv ){
     //quit on ESC button
     if(waitKey(1)==27)break;
 #else
-    static int index = 0;
     const std::string outputPath = "trackResult";
     Common::createPath(outputPath);
     std::string outputFile = outputPath + "/" + std::to_string(index++) + ".jpg";
@@ -106,7 +97,6 @@ int KCFTest( int argc, char** argv ){
   }
   if (imageCount > 0)
   {
-
     LOG_I(mClassName, "total image:" << imageCount << ", total spend time:" << totalTime << "ms, avg:" << totalTime/imageCount << "ms");
   }
   else
