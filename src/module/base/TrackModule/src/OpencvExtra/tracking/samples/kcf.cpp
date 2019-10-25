@@ -14,6 +14,7 @@
 #include <iostream>
 #include <cstring>
 #include "samples_utility.hpp"
+#include "Common.h"
 
 #include "trackingSample.h"
 
@@ -43,12 +44,15 @@ int KCFTest( int argc, char** argv ){
 
   // get bounding box
   cap >> frame;
+#if 0
   Rect2d roi= selectROI("tracker", frame, true, false);
 
   //quit if ROI was not selected
   if(roi.width==0 || roi.height==0)
     return 0;
-
+#else
+  Rect2d roi = {827,553,40,30};
+#endif
   // initialize the tracker
   tracker->init(frame,roi);
 
@@ -73,12 +77,22 @@ int KCFTest( int argc, char** argv ){
 
     // draw the tracked object
     rectangle( frame, roi, Scalar( 255, 0, 0 ), 2, 1 );
-
+#if 0
     // show image with the tracked object
     imshow("tracker",frame);
 
     //quit on ESC button
     if(waitKey(1)==27)break;
+#else
+    static int index = 0;
+    const std::string outputPath = "trackResult";
+    Common::createPath(outputPath);
+    std::string outputFile = outputPath + "/" + std::to_string(index++) + ".jpg";
+    std::vector<int> param;
+    param.push_back(cv::IMWRITE_JPEG_QUALITY);
+    param.push_back(85);
+    imwrite(outputFile, frame, param);
+#endif
   }
 
 }
