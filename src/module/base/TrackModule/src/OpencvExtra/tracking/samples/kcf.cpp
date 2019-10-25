@@ -46,7 +46,7 @@ int KCFTest( int argc, char** argv ){
   int index = 1;
   const std::string inputPath = "/data/mars/picdata/pedestrian/";
   Mat frame = cv::imread(inputPath + std::to_string(index) + ".jpg");
-  Rect2d roi = {828,606,25,25};
+  Rect2d roi = {823,601,35,35};
 #endif
   // initialize the tracker
   tracker->init(frame,roi);
