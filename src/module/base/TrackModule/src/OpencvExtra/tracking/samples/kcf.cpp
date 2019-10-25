@@ -15,6 +15,8 @@
 #include <cstring>
 #include "samples_utility.hpp"
 #include "Common.h"
+#include "Log.h"
+#include <QDateTime>
 
 #include "trackingSample.h"
 
@@ -22,6 +24,7 @@ using namespace std;
 using namespace cv;
 
 int KCFTest( int argc, char** argv ){
+    const std::string mClassName = "KCF";
   // show help
   if(argc<2){
     cout<<
@@ -57,6 +60,8 @@ int KCFTest( int argc, char** argv ){
   tracker->init(frame,roi);
 
   // do the tracking
+  long long totalTime = 0;
+  int imageCount = 0;
   printf("Start the tracking process, press ESC to quit.\n");
   for ( ;; ){
     // get frame from the video
@@ -66,14 +71,19 @@ int KCFTest( int argc, char** argv ){
     if(frame.rows==0 || frame.cols==0)
       break;
 
+    QDateTime beginTime = QDateTime::currentDateTime();
     // update the tracking result
     bool isfound = tracker->update(frame,roi);
+    QDateTime endTime = QDateTime::currentDateTime();
     if(!isfound)
     {
-        cout << "The target has been lost...\n";
-        waitKey(0);
-        return 0;
+        LOG_I(mClassName, "The target has been lost...") ;
+        break;
     }
+
+    // 计算耗时
+    totalTime += endTime.toMSecsSinceEpoch() - beginTime.toMSecsSinceEpoch();
+    ++imageCount;
 
     // draw the tracked object
     rectangle( frame, roi, Scalar( 255, 0, 0 ), 2, 1 );
@@ -94,5 +104,5 @@ int KCFTest( int argc, char** argv ){
     imwrite(outputFile, frame, param);
 #endif
   }
-
+    LOG_I(mClassName, "total image:" << imageCount << ", total spend time:" << totalTime << "ms, avg:" << totalTime/imageCount << "ms");
 }
