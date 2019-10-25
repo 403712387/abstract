@@ -4,6 +4,7 @@
 #include "EyeDetect.h"
 #include "FaceDetect.h"
 #include "FastFaceDetect.h"
+#include "PedestrianDetect.h"
 int main(int argc, char *argv[])
 {
     // 人脸检测
@@ -13,7 +14,10 @@ int main(int argc, char *argv[])
     //eyeDetect();
 
     // 快速人脸检测
-    fastFaceDetect();
+    //fastFaceDetect();
+
+    // 行人检测
+    pedestrianDetect();
 #if 0
     // 人脸检测
     return facemarkDemoAAM(argc, argv);
