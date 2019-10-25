@@ -104,5 +104,13 @@ int KCFTest( int argc, char** argv ){
     imwrite(outputFile, frame, param);
 #endif
   }
+  if (imageCount > 0)
+  {
+
     LOG_I(mClassName, "total image:" << imageCount << ", total spend time:" << totalTime << "ms, avg:" << totalTime/imageCount << "ms");
+  }
+  else
+  {
+      LOG_I(mClassName, "fuck ");
+  }
 }
