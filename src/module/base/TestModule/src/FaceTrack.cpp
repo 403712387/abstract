@@ -4,5 +4,6 @@
 // 跟踪算法
 void faceTrack(int argc, char *argv[])
 {
-    KCFTest(argc, argv);
+    //KCFTest(argc, argv);
+    TrackerDemo(argc, argv);
 }

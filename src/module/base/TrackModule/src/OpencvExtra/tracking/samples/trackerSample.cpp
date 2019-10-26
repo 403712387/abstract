@@ -7,6 +7,9 @@
 #include "samples_utility.hpp"
 
 #include "trackingSample.h"
+#include "Common.h"
+#include "Log.h"
+#include <QDateTime>
 
 using namespace std;
 using namespace cv;
@@ -33,9 +36,11 @@ static void help()
 }
 
 int TrackerDemo( int argc, char** argv ){
+    const std::string mClassName = "TrackerDemo";
   CommandLineParser parser( argc, argv, keys );
 
   String tracker_algorithm = parser.get<String>(0);
+#if 0
   String video_name = parser.get<String>( 1 );
   int start_frame = parser.get<int>(2);
 
@@ -88,10 +93,15 @@ int TrackerDemo( int argc, char** argv ){
 
   Mat frame;
   namedWindow( "Tracking API", 1 );
-
   Mat image;
   Rect2d boundingBox;
   bool paused = false;
+#else
+  int index = 1;
+  const std::string inputPath = "/data/mars/picdata/pedestrian/";
+  Mat frame = cv::imread(inputPath + std::to_string(index) + ".jpg");
+  Rect2d boundingBox = {823,601,35,35};
+#endif
 
   //instantiates the specific Tracker
   Ptr<Tracker> tracker = createTrackerByName(tracker_algorithm);
@@ -100,7 +110,7 @@ int TrackerDemo( int argc, char** argv ){
     cout << "***Error in the instantiation of the tracker...***\n";
     return -1;
   }
-
+#if 0
   //get the first frame
   cap >> frame;
   frame.copyTo( image );
@@ -116,57 +126,59 @@ int TrackerDemo( int argc, char** argv ){
     boundingBox = selectROI("Tracking API", image);
 
   imshow( "Tracking API", image );
-
-  bool initialized = false;
-  int frameCounter = 0;
-  int64 timeTotal = 0;
-
-  for ( ;; )
+#else
+  //initializes the tracker
+  if( !tracker->init( frame, boundingBox ) )
   {
-    if( !paused )
-    {
-      if(initialized){
-          cap >> frame;
-          if(frame.empty()){
-            break;
-          }
-          frame.copyTo( image );
-      }
+    cout << "***Could not initialize tracker...***\n";
+    return -1;
+  }
+#endif
 
-      if( !initialized )
-      {
-        //initializes the tracker
-        if( !tracker->init( frame, boundingBox ) )
-        {
-          cout << "***Could not initialize tracker...***\n";
-          return -1;
-        }
-        initialized = true;
-      }
-      else if( initialized )
-      {
-        int64 frameTime = getTickCount();
-        //updates the tracker
-        if( tracker->update( frame, boundingBox ) )
-        {
-          rectangle( image, boundingBox, Scalar( 255, 0, 0 ), 2, 1 );
-        }
-        frameTime = getTickCount() - frameTime;
-        timeTotal += frameTime;
-      }
-      imshow( "Tracking API", image );
-      frameCounter++;
-    }
+  // do the tracking
+  long long totalTime = 0;
+  int imageCount = 0;
+  for ( int i = 0; i < 3000; ++i )
+  {
+      // get frame from the video
+      frame = cv::imread(inputPath + std::to_string(index) + ".jpg");
 
-    char c = (char) waitKey( 2 );
-    if( c == 'q' )
-      break;
-    if( c == 'p' )
-      paused = !paused;
+      QDateTime beginTime = QDateTime::currentDateTime();
+      //updates the tracker
+      if( tracker->update( frame, boundingBox ) )
+      {
+          rectangle( frame, boundingBox, Scalar( 255, 0, 0 ), 2, 1 );
+          QDateTime endTime = QDateTime::currentDateTime();
+
+          // 计算耗时
+          totalTime += endTime.toMSecsSinceEpoch() - beginTime.toMSecsSinceEpoch();
+          ++imageCount;
+
+          // draw the tracked object
+          rectangle( frame, boundingBox, Scalar( 255, 0, 0 ), 2, 1 );
+
+          const std::string outputPath = "trackResult";
+          Common::createPath(outputPath);
+          std::string outputFile = outputPath + "/" + std::to_string(index++) + ".jpg";
+          std::vector<int> param;
+          param.push_back(cv::IMWRITE_JPEG_QUALITY);
+          param.push_back(85);
+          imwrite(outputFile, frame, param);
+      }
+      else
+      {
+          break;
+      }
   }
 
-  double s = frameCounter / (timeTotal / getTickFrequency());
-  printf("FPS: %f\n", s);
+  if (imageCount > 0)
+  {
+    LOG_I(mClassName, "total image:" << imageCount << ", total spend time:" << totalTime << "ms, avg:" << totalTime/imageCount << "ms");
+  }
+  else
+  {
+      LOG_I(mClassName, "fuck ");
+  }
 
   return 0;
 }
