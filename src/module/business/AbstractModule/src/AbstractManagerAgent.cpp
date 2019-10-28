@@ -160,6 +160,7 @@ bool AbstractManagerAgent::processRemoveTask(std::string id)
 
     // 删除任务
     removeTask(id);
+    return true;
 }
 
 // 处理更新任务

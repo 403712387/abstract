@@ -5,7 +5,7 @@ SUBDIRS += \
         ./module/base/Common/Common.pro \
         ./module/base/CoreModule/CoreModule.pro \
         ./module/base/HttpModule/HttpModule.pro \
-        ./module/base/TrackModule/TrackModule.pro \
+        ./module/base/FaceTrackModule/FaceTrackModule.pro \
         ./module/base/TestModule/TestModule.pro \
         ./module/base/ChooseBestModule/ChooseBestModule.pro \
         ./module/base/FFmpegIngestModule/FFmpegIngestModule.pro \
