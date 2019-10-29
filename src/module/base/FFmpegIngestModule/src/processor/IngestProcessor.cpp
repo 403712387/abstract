@@ -179,7 +179,7 @@ bool IngestProcessor::initVideoFormat()
 }
 
 // 拉取视频流
-std::shared_ptr<Error> IngestProcessor::work()
+std::shared_ptr<Error> IngestProcessor::workThread()
 {
     std::shared_ptr<Error> error;
     LOG_I(mClassName, "begin thread work");

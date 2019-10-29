@@ -1,11 +1,12 @@
 #include <sstream>
 #include "AbstractCondition.h"
 
-AbstractCondition::AbstractCondition(std::string url, std::set<AbstractType> type, AbstractModel model)
+AbstractCondition::AbstractCondition(std::string url, std::set<AbstractType> type, AbstractModel model, int abstractCount)
 {
     mStreamUrl = url;
     mTypes = type;
     mModel = model;
+    mAbstractCount = abstractCount;
 }
 
 // 获取流的url
@@ -32,6 +33,12 @@ AbstractModel AbstractCondition::getAbstractModel()
     return mModel;
 }
 
+// 一个跟踪目标中提取图片的张数
+int AbstractCondition::getAbstractCount()
+{
+    return mAbstractCount;
+}
+
 std::string AbstractCondition::toString()
 {
     std::stringstream buf;
@@ -40,7 +47,7 @@ std::string AbstractCondition::toString()
     {
         buf << Common::getAbstraceTypeName(type) << ", ";
     }
-    buf << ", abstract module:" << Common::getAbstraceModuleName(mModel) << ", birthday:" << mBirthday.toString("yyyy-MM-dd HH:mm:ss.zzz").toStdString();
+    buf << ", abstract module:" << Common::getAbstraceModelName(mModel) << ", abstract count:" << mAbstractCount << ", birthday:" << mBirthday.toString("yyyy-MM-dd HH:mm:ss.zzz").toStdString();
     return buf.str();
 }
 
@@ -53,7 +60,8 @@ Json::Value AbstractCondition::toJson()
     {
         result["type"][index++] = Common::getAbstraceTypeName(type);
     }
-    result["module"] = Common::getAbstraceModuleName(mModel);
+    result["module"] = Common::getAbstraceModelName(mModel);
+    result["abstract_count"] = mAbstractCount;
     result["birthday"] = mBirthday.toString("yyyy-MM-dd HH:mm:ss.zzz").toStdString();
     return result;
 }

@@ -40,7 +40,7 @@ private:
     long long           mFrameIndex = 0;
     VideoFrameType      mFrameType = Video_Frame_I;
     std::shared_ptr<std::string> mFrameData;
-    QDateTime           mBirthday;
+    QDateTime           mBirthday =  QDateTime::currentDateTime();
     long long           mPts = 0;
     long long           mDts = 0;
 };

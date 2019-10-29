@@ -56,6 +56,26 @@ public:
         return true;
     }
 
+    // 从队列中取出一个元素，不等待
+    std::shared_ptr<T> popNoWait()
+    {
+        std::shared_ptr<T> result;
+        std::unique_lock<std::mutex> autoLock(mDataMutex);
+        {
+            if (mListData.empty())
+            {
+                return result;
+            }
+
+            if (!mListData.empty())
+            {
+                result = mListData.front();
+                mListData.pop_front();
+            }
+        }
+        return result;
+    }
+
     // 从队列中取出一个元素
     std::shared_ptr<T> pop()
     {

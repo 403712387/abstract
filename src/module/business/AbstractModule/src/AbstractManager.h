@@ -5,6 +5,7 @@
 /*
  * 从视频中提取出来人脸的业务模块
 */
+class TrackCondition;
 class IngestInfo;
 class AbstractManagerAgent;
 class ABSTRACT_EXPORT AbstractManager : public BaseProcess
@@ -40,7 +41,7 @@ private:
     bool sendStopIngestStreamMessage(std::shared_ptr<IngestInfo> ingest);
 
     // 发送开始跟踪消息
-    void sendStartTrackMessage(std::string abstractId, AbstractType type, AbstractModel model);
+    void sendStartTrackMessage(std::shared_ptr<TrackCondition> trackInfo);
 
     // 发送停止跟踪消息
     void sendStopTrackMessage(std::string abstractId, AbstractType type);

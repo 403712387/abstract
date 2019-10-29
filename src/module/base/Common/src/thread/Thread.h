@@ -23,7 +23,7 @@ public:
 private:
 
     // 线程启动后运行的函数
-    void work();
+    void workThread();
 private:
     std::string         mClassName = "Thread";
     ThreadHandler       *mThreadHandler = NULL;

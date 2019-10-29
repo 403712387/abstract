@@ -39,7 +39,7 @@ public:
 protected:
 
     // 拉取视频流
-    virtual std::shared_ptr<Error> work();
+    virtual std::shared_ptr<Error> workThread();
 
     // 初始化视频格式信息
     bool initVideoFormat();

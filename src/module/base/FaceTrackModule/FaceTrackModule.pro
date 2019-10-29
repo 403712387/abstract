@@ -21,6 +21,7 @@ INCLUDEPATH += ./src \
             ../Common/src \
             ../Common/src/log \
             ../Common/src/info \
+            ../Common/src/common \
             ../Common/src/thread \
             ../Common/src/message \
             ../CoreModule/src \

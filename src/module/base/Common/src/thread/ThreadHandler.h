@@ -19,7 +19,7 @@ protected:
     virtual std::shared_ptr<Error> start();
 
     // 工作
-    virtual std::shared_ptr<Error> work() = 0;
+    virtual std::shared_ptr<Error> workThread() = 0;
 
     // 结束
     virtual void stop();

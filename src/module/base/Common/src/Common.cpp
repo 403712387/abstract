@@ -105,6 +105,14 @@ long long Common::getSequenceId()
     return std::abs(++beginId);
 }
 
+// 获取区域的字符串
+std::string Common::getRectString(QRect rect)
+{
+    std::stringstream buf;
+    buf << "left:" << rect.left() << ", top:" << rect.top() << ", width:" << rect.width() << ", height:" << rect.height();
+    return buf.str();
+}
+
 // 获取端口的名字
 std::string Common::getPortTypeName(PortType type)
 {
@@ -159,7 +167,7 @@ AbstractType Common::getAbstractTypeByName(std::string name)
 }
 
 // 获取提取的模式的字符串
-std::string Common::getAbstraceModuleName(AbstractModel type)
+std::string Common::getAbstraceModelName(AbstractModel type)
 {
     static std::vector<std::string> result = {"realtime first", "quality first"};
     if (type < 0 || type >= result.size())

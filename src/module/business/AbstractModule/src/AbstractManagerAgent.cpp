@@ -1,5 +1,8 @@
 #include <algorithm>
+#include "TrackCondition.h"
 #include "IngestInfo.h"
+#include "FrameRatio.h"
+#include "VideoFormat.h"
 #include "AbstractTask.h"
 #include "StopAbstract.h"
 #include "AbstractCommon.h"
@@ -118,7 +121,7 @@ std::pair<std::string, std::shared_ptr<Error>> AbstractManagerAgent::processAddT
     }
 
     // 发送开始跟踪的消息
-    sendStartTrackMessage(id, condition->getAbstractType(), condition->getAbstractModel());
+    sendStartTrackMessage(id, condition->getAbstractType(), condition->getAbstractModel(), ret.first->getFrameRatio()->getFrameRatio(), condition->getAbstractCount());
 
     // 创建任务
     std::shared_ptr<AbstractTask> task = std::make_shared<AbstractTask>(condition, id);
@@ -177,7 +180,7 @@ std::pair<std::string, std::shared_ptr<Error>> AbstractManagerAgent::processUpda
     std::set_difference(types.begin(), types.end(), oldTypes.begin(), oldTypes.end(), std::inserter(addTypes,addTypes.begin()));
 
     // 发送开始跟踪和停止跟踪的消息
-    sendStartTrackMessage(task->getAbstractId(), addTypes, task->getAbstractCondition()->getAbstractModel());
+    sendStartTrackMessage(task->getAbstractId(), addTypes, task->getAbstractCondition()->getAbstractModel(), task->getVideoFormat()->getFrameRatio()->getFrameRatio(), task->getAbstractCondition()->getAbstractCount());
     sendStopTrackMessage(task->getAbstractId(), removeTypes);
 
     // 更新提取的类型
@@ -261,12 +264,10 @@ std::pair<std::shared_ptr<VideoFormat>, std::shared_ptr<Error>> AbstractManagerA
 }
 
 // 发送开始跟踪消息
-void AbstractManagerAgent::sendStartTrackMessage(std::string abstractId, std::set<AbstractType> types, AbstractModel model)
+void AbstractManagerAgent::sendStartTrackMessage(std::string abstractId, std::set<AbstractType> types, AbstractModel model, int frameRatio, int abstractCount)
 {
-    for (AbstractType type : types)
-    {
-        mManager->sendStartTrackMessage(abstractId, type, model);
-    }
+    std::shared_ptr<TrackCondition> trackInfo = std::make_shared<TrackCondition>(abstractId, types, model, frameRatio, abstractCount);
+    mManager->sendStartTrackMessage(trackInfo);
 }
 
 // 发送停止跟踪消息

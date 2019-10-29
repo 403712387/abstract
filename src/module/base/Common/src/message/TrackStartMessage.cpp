@@ -1,35 +1,22 @@
 #include <sstream>
+#include "TrackCondition.h"
 #include "TrackStartMessage.h"
 
-TrackStartMessage::TrackStartMessage(std::string abstractId, AbstractType type, AbstractModel model, MessageTransType transType ,PriorityType priority , MessageDistriubite distribute )
+TrackStartMessage::TrackStartMessage(std::shared_ptr<TrackCondition> trackInfo, MessageTransType transType ,PriorityType priority , MessageDistriubite distribute )
     :BaseMessage(Track_Start_Message, transType, priority, distribute)
 {
-    mAbstractId = abstractId;
-    mAbstractType = type;
-    mAbstractModel = model;
+    mTrackInfo = trackInfo;
 }
 
-// 获取提取的ID
-std::string TrackStartMessage::getAbstractId()
+// 获取跟踪的信息
+std::shared_ptr<TrackCondition> TrackStartMessage::getTrackInfo()
 {
-    return mAbstractId;
-}
-
-// 获取提取的类型
-AbstractType TrackStartMessage::getAbstractType()
-{
-    return mAbstractType;
-}
-
-// 获取提取的模式(质量优先还是实时优先)
-AbstractModel TrackStartMessage::getAbstractModel()
-{
-    return mAbstractModel;
+    return mTrackInfo;
 }
 
 std::string TrackStartMessage::toString()
 {
     std::stringstream buf;
-    buf << "id:" << mAbstractId << ", type:" << Common::getAbstraceTypeName(mAbstractType) << ", " << BaseMessage::toString();
+    buf << "track info:" << mTrackInfo->toString() << ", " << BaseMessage::toString();
     return buf.str();
 }

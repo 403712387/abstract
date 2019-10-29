@@ -9,7 +9,6 @@ VideoFrameInfo::VideoFrameInfo(std::string streamId, long long frameIndex, Video
     mFrameData = frameData;
     mPts = pts;
     mDts = dts;
-    mBirthday = QDateTime::currentDateTime();
 }
 
 // 获取流ID

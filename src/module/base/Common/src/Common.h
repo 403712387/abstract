@@ -93,6 +93,9 @@ namespace Common
     // 生成一个sequence ID(sequence ID是从0开始自增的，Unique ID不是)
     ABSTRACT_EXPORT long long getSequenceId();
 
+    // 获取区域的字符串
+    ABSTRACT_EXPORT std::string getRectString(QRect rect);
+
     // 获取端口的名字
     ABSTRACT_EXPORT std::string getPortTypeName(PortType type);
 
@@ -106,7 +109,7 @@ namespace Common
     ABSTRACT_EXPORT AbstractType getAbstractTypeByName(std::string name);
 
     // 获取提取的模式的字符串
-    ABSTRACT_EXPORT std::string getAbstraceModuleName(AbstractModel type);
+    ABSTRACT_EXPORT std::string getAbstraceModelName(AbstractModel type);
 
     // 根据名字，获取提取的模式
     ABSTRACT_EXPORT AbstractModel getAbstractModelByName(std::string name);

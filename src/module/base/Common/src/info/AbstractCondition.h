@@ -9,7 +9,7 @@
 class ABSTRACT_EXPORT AbstractCondition
 {
 public:
-    AbstractCondition(std::string url, std::set<AbstractType> type, AbstractModel model);
+    AbstractCondition(std::string url, std::set<AbstractType> type, AbstractModel model, int abstractCount);
 
     // 获取流的url
     std::string getStreamUrl();
@@ -23,6 +23,9 @@ public:
     // 获取提取的模式(质量优先还是实时优先)
     AbstractModel getAbstractModel();
 
+    // 一个跟踪目标中提取图片的张数
+    int getAbstractCount();
+
     std::string toString();
     Json::Value toJson();
 
@@ -30,6 +33,7 @@ private:
     std::string     mStreamUrl;
     std::set<AbstractType>  mTypes;
     AbstractModel  mModel = Abstract_Quality_First;
+    int             mAbstractCount;     // 提取图片的张数
     QDateTime       mBirthday = QDateTime::currentDateTime();
 };
 #endif

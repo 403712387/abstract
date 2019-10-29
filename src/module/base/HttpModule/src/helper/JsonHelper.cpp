@@ -159,7 +159,15 @@ std::pair<std::shared_ptr<AbstractCondition>, std::shared_ptr<Error>> JsonHelper
             {
                 model = Common::getAbstractModelByName(readerRoot[key]["model"].asString());
             }
-            result.first = std::make_shared<AbstractCondition>(url, types, model);
+
+            // 提取的张数
+            int abstractCount = 2;
+            if (readerRoot[key].isMember("abstract_count"))
+            {
+                abstractCount = readerRoot[key]["abstract_count"].asInt();
+            }
+
+            result.first = std::make_shared<AbstractCondition>(url, types, model, abstractCount);
         }
         else
         {

@@ -1,31 +1,43 @@
 #include "FaceTrackManager.h"
 #include "FaceTrackManagerAgent.h"
 
-TrackManagerAgent::TrackManagerAgent(TrackManager *manager)
+FaceTrackManager::FaceTrackManager(TrackManager *manager)
 {
     mManager = manager;
 }
 
 // 初始化
-bool TrackManagerAgent::init()
+bool FaceTrackManager::init()
 {
     return true;
 }
 
 // 反初始化
-bool TrackManagerAgent::uninit()
+bool FaceTrackManager::uninit()
 {
     return true;
 }
 
 // 开始跟踪
-bool TrackManagerAgent::startTrack(std::string abstractId, AbstractType type)
+bool FaceTrackManager::startTrack(std::shared_ptr<TrackCondition> trackInfo)
 {
     return true;
 }
 
 // 停止跟踪
-bool TrackManagerAgent::stopTrack(std::string abstractId, AbstractType type)
+bool FaceTrackManager::stopTrack(std::string abstractId)
+{
+    return true;
+}
+
+// 暂停跟踪
+bool FaceTrackManager::pauseTrack(std::string abstractId)
+{
+    return true;
+}
+
+// 接收到视频帧
+bool FaceTrackManager::receiveVideoFrame(std::shared_ptr<VideoFrameInfo> frame)
 {
     return true;
 }

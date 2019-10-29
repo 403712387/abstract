@@ -65,7 +65,7 @@ private:
     std::vector<std::shared_ptr<AbstractTask>> getAllTask();
 
     // 发送开始跟踪消息
-    void sendStartTrackMessage(std::string abstractId, std::set<AbstractType> types, AbstractModel model);
+    void sendStartTrackMessage(std::string abstractId, std::set<AbstractType> types, AbstractModel model, int frameRatio, int abstractCount);
 
     // 发送停止跟踪消息
     void sendStopTrackMessage(std::string abstractId, std::set<AbstractType> types);

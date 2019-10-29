@@ -33,11 +33,11 @@ void Thread::stop()
 }
 
 // 线程启动后运行的函数
-void Thread::work()
+void Thread::workThread()
 {
     // 设置线程名称
     Common::setThreadName(mThreadHandler->getThreadName());
 
     mThreadHandler->start();
-    mThreadHandler->work();
+    mThreadHandler->workThread();
 }

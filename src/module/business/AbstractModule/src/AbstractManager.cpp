@@ -121,9 +121,9 @@ bool AbstractManager::sendStopIngestStreamMessage(std::shared_ptr<IngestInfo> in
 }
 
 // 发送开始跟踪消息
-void AbstractManager::sendStartTrackMessage(std::string abstractId, AbstractType type, AbstractModel model)
+void AbstractManager::sendStartTrackMessage(std::shared_ptr<TrackCondition> trackInfo)
 {
-    std::shared_ptr<TrackStartMessage> message = std::make_shared<TrackStartMessage>(abstractId, type, model);
+    std::shared_ptr<TrackStartMessage> message = std::make_shared<TrackStartMessage>(trackInfo);
     sendMessage(message);
 }
 
