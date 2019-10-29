@@ -3,12 +3,12 @@
 #include "Common.h"
 
 class TrackCondition;
-class TrackManager;
 class VideoFrameInfo;
+class FaceTrackManager;
 class FaceTrackManagerAgent
 {
 public:
-    FaceTrackManagerAgent(TrackManager *manager);
+    FaceTrackManagerAgent(FaceTrackManager *manager);
 
     // 初始化
     bool init();
@@ -30,7 +30,7 @@ public:
 
 private:
     std::string     mClassName = "FaceTrackManagerAgent";
-    TrackManager    *mManager = NULL;
+    FaceTrackManager    *mManager = NULL;
 };
 
 #endif

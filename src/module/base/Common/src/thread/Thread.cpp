@@ -16,7 +16,7 @@ std::shared_ptr<Error> Thread::start()
         return Common::noError();
     }
 
-    mThread = std::thread(&Thread::work, this);
+    mThread = std::thread(&Thread::workThread, this);
     return Common::noError();
 }
 

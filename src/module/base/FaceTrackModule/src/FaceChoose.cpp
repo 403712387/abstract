@@ -27,7 +27,7 @@ void FaceChoose::receiveFaceTrackInfo(std::shared_ptr<TrackFaceInfo> face)
 {
     ++mReceiveFaceCount;
     mLastFaceTime = QDateTime::currentDateTime();
-    else if (mListFaceInfo.size() < mListFaceInfo.size())
+    if (mListFaceInfo.size() < mListFaceInfo.size())
     {
         mListFaceInfo.push_back(face);
     }
@@ -38,7 +38,7 @@ void FaceChoose::receiveFaceTrackInfo(std::shared_ptr<TrackFaceInfo> face)
     else
     {
         // 新来的人脸质量较高，把队列中最低的人脸更新一下
-        auto *minElement = std::max_element(mListFaceInfo.begin(), mListFaceInfo.end(), [](const std::shared_ptr<TrackFaceInfo> &first, const std::shared_ptr<TrackFaceInfo> &second) ->bool
+        auto minElement = std::max_element(mListFaceInfo.begin(), mListFaceInfo.end(), [](const std::shared_ptr<TrackFaceInfo> &first, const std::shared_ptr<TrackFaceInfo> &second) ->bool
         {
             return (first->getFaceQuality()  < second->getFaceQuality());
         });
@@ -67,13 +67,13 @@ QDateTime FaceChoose::getLastReceiveTime()
 // 获取选中的人脸
 std::shared_ptr<TrackFaceInfo> FaceChoose::getChooseFace()
 {
-    std::shared_ptr<TrackCondition> result;
+    std::shared_ptr<TrackFaceInfo> result;
     if (mListFaceInfo.empty())
     {
         return result;
     }
 
-    auto *maxElement = std::max_element(mListFaceInfo.begin(), mListFaceInfo.end(), [](const std::shared_ptr<TrackFaceInfo> &first, const std::shared_ptr<TrackFaceInfo> &second) ->bool
+    auto maxElement = std::max_element(mListFaceInfo.begin(), mListFaceInfo.end(), [](const std::shared_ptr<TrackFaceInfo> &first, const std::shared_ptr<TrackFaceInfo> &second) ->bool
     {
         return (first->getFaceQuality()  < second->getFaceQuality());
     });

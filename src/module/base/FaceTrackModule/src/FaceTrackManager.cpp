@@ -10,7 +10,7 @@
 FaceTrackManager::FaceTrackManager(MessageRoute *messageRoute)
     :BaseProcess(messageRoute, "FaceTrackManager")
 {
-    mAgent = std::make_shared<TrackManagerAgent>(this);
+    mAgent = std::make_shared<FaceTrackManagerAgent>(this);
 
     subscribeMessage(Track_Start_Message);
     subscribeMessage(Track_Stop_Message);

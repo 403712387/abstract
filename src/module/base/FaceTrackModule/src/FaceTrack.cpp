@@ -5,7 +5,8 @@
 #include "TrackCondition.h"
 #include "VideoFrameMessage.h"
 #include "FaceTrackManagerAgent.h"
-FaceTrack::FaceTrack(TrackManagerAgent *managerAgent)
+FaceTrack::FaceTrack(FaceTrackManagerAgent *managerAgent)
+    :ThreadHandler("trackFace")
 {
     mManagerAgent = managerAgent;
 }
@@ -23,7 +24,7 @@ bool FaceTrack::init(std::shared_ptr<TrackCondition> trackInfo)
 // 反初始化
 bool FaceTrack::uninit()
 {
-    LOG_I(mClassName, "end face track, track info:" << trackInfo->toString());
+    LOG_I(mClassName, "end face track, track info:" << mTrackInfo->toString());
     mTrackThread->stop();
 }
 
@@ -75,16 +76,19 @@ std::shared_ptr<Error> FaceTrack::workThread()
 // 选择人脸
 void FaceTrack::chooseAllFace(bool trackDone)
 {
-    for (auto info : mMpaFaceChoose)
+    QMap<long long, std::shared_ptr<FaceChoose>> mapFaceChoose(mMapFaceChoose);
+    QMapIterator<long long, std::shared_ptr<FaceChoose>> iterator(mapFaceChoose);
+    while (iterator.hasNext())
     {
-        chooseFaceFromList(info.first, trackDone);
+        iterator.next();
+        chooseFaceFromList(iterator.key(), trackDone);
     }
 }
 
 // 选择人脸
 bool FaceTrack::chooseFaceFromList(long long faceId, bool trackDone)
 {
-    std::shared_ptr<FaceChoose> faceChoose = mMpaFaceChoose.value(faceId);
+    std::shared_ptr<FaceChoose> faceChoose = mMapFaceChoose.value(faceId);
     if ( NULL == faceChoose.get())
     {
         return false;
@@ -122,7 +126,7 @@ bool FaceTrack::chooseFaceFromList(long long faceId, bool trackDone)
         //  只有在实时优先的模式下，才会在跟踪完之前取人脸信息
         if (Abstract_Realtime_First != faceChoose->getTarckCondition()->getAbstractModel())
         {
-            return;
+            return true;
         }
 
         // 判断是否达到了取人脸图片的要求
@@ -135,12 +139,13 @@ bool FaceTrack::chooseFaceFromList(long long faceId, bool trackDone)
             }
         }
     }
+    return true;
 }
 
 // 删除人脸
 bool FaceTrack::removeFace(long long faceId)
 {
-    return mMpaFaceChoose.remove(faceId);
+    return mMapFaceChoose.remove(faceId);
 }
 
 // 处理接收到的视频帧
@@ -149,11 +154,25 @@ void FaceTrack::processVideoFrame(std::shared_ptr<VideoFrameInfo> videoFrame)
     if (0 == (videoFrame->getFrameIndex() % mFaceDetectInterval))
     {
         // 人脸检测
+        detectFacePosition(videoFrame);
     }
     else
     {
         // 人脸跟踪
+        trackFacePosition(videoFrame);
     }
+}
+
+// 检测人脸
+void FaceTrack::detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
+{
+
+}
+
+// 跟踪人脸位置
+void FaceTrack::trackFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
+{
+
 }
 
 // 发送跟踪到的人脸

@@ -44,6 +44,12 @@ protected:
     // 处理接收到的视频帧
     void processVideoFrame(std::shared_ptr<VideoFrameInfo> videoFrame);
 
+    // 检测人脸
+    void detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame);
+
+    // 跟踪人脸位置
+    void trackFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame);
+
     // 发送跟踪到的人脸
     void sendTrackFaceResult(std::shared_ptr<TrackFaceInfo> face);
 
@@ -52,7 +58,7 @@ protected:
 
 private:
     std::string                     mClassName = "FaceTrack";
-    FaceTrackManagerAgent           mManagerAgent= NULL;
+    FaceTrackManagerAgent           *mManagerAgent= NULL;
     std::shared_ptr<TrackCondition> mTrackInfo;
 
     std::shared_ptr<Thread>         mTrackThread;       // 跟踪类
@@ -61,7 +67,7 @@ private:
     int                             mFaceExpire = 3000;     //人脸超时的时间
     float                           mFaceDetectIntervalRatio = 1.0;
     int                             mFaceDetectInterval = 24;       // 隔多少帧进行一次人脸检测
-    QMap<long long, std::shared_ptr<FaceChoose>>    mMpaFaceChoose;     // 跟踪出来的人脸放入此map中
+    QMap<long long, std::shared_ptr<FaceChoose>>    mMapFaceChoose;     // 跟踪出来的人脸放入此map中
 };
 
 #endif
