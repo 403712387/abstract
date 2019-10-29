@@ -43,9 +43,9 @@ void FaceTrack::ingestException(std::shared_ptr<BaseMessage> message)
 std::shared_ptr<Error> FaceTrack::workThread()
 {
     LOG_I(mClassName, "begin face track thread, track info:" << mTrackInfo->toString());
-    while(!isStop())
+    while(!isStop() && !mMessageQueue.empty())
     {
-        std::shared_ptr<BaseMessage> message = mMessageQueue.popNoWait();
+        std::shared_ptr<BaseMessage> message = mMessageQueue.popExpiration(10);
         if (NULL == message.get())
         {
             // 选择跟踪出来的质量较好的人脸
