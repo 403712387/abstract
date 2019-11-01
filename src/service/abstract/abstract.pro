@@ -37,6 +37,7 @@ LIBS += -L../../bin/abstract/lib/module -lCommon -lCoreModule -lHttpModule -lSer
         -lFFmpegIngestModule -lFaceTrackModule -lAbstractModule \
         -L../../../thirdparty/lib/linux64/jsoncpp  -ljsoncpp \
         -L../../../thirdparty/lib/linux64/log4cplus -llog4cplus \
+        -L../../../thirdparty/lib/linux64/facedetection -lfacedetection \
         -L../../../thirdparty/lib/linux64/curl -lcurl \
         -L../../../thirdparty/lib/linux64/gperftools/static -lprofiler -ltcmalloc \
         -L../../../thirdparty/lib/linux64/libmicrohttpd  -lmicrohttpd \
