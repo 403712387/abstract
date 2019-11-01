@@ -26,7 +26,7 @@ INCLUDEPATH += ./src \
             ../../../../thirdparty/include/openCV \
             ../../../../thirdparty/include/facedetection
 win32 {
-LIBS += -L../../../bin/abstract/lib/module -lCommon -lCoreModule -lTrackModule \
+LIBS += -L../../../bin/abstract/lib/module -lCommon -lCoreModule -lFaceTrackModule \
         -L../../../../thirdparty/lib/windows64/Qt -lQt5Core \
         -L../../../../thirdparty/lib/windows64/facedetection -lfacedetection \
         -L../../../../thirdparty/lib/windows64/openCV -lopencv_core400 -lopencv_video400 -lopencv_videoio400 -lopencv_highgui400 -lopencv_ml400 -lopencv_objdetect400 -lopencv_imgcodecs400 -lopencv_imgproc400 \
@@ -34,7 +34,7 @@ LIBS += -L../../../bin/abstract/lib/module -lCommon -lCoreModule -lTrackModule \
 }
 
 unix {
-LIBS += -L../../../bin/abstract/lib/module -lCommon -lCoreModule -lTrackModule \
+LIBS += -L../../../bin/abstract/lib/module -lCommon -lCoreModule -lFaceTrackModule \
         -L../../../../thirdparty/lib/linux64/Qt -lQt5Core \
         -L../../../../thirdparty/lib/linux64/jsoncpp  -ljsoncpp \
         -L../../../../thirdparty/lib/linux64/log4cplus -llog4cplus \

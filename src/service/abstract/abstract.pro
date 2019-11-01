@@ -27,14 +27,14 @@ INCLUDEPATH += \
 
 win32 {
 LIBS += -L../../bin/abstract/lib/module -lCommon -lCoreModule -lHttpModule -lServiceStatusModule -lConfigureModule -lChooseBestModule \
-        -lFFmpegIngestModule -lTrackPersonModule -lAbstractModule \
+        -lFFmpegIngestModule -lFaceTrackPersonModule -lAbstractModule \
         -L../../../thirdparty/lib/windows64/Qt -lQt5Core \
         -L../../../thirdparty/lib/windows64/jsoncpp  -ljsoncpp
 }
 
 unix {
 LIBS += -L../../bin/abstract/lib/module -lCommon -lCoreModule -lHttpModule -lServiceStatusModule -lConfigureModule -lChooseBestModule \
-        -lFFmpegIngestModule -lTrackModule -lAbstractModule \
+        -lFFmpegIngestModule -lFaceTrackModule -lAbstractModule \
         -L../../../thirdparty/lib/linux64/jsoncpp  -ljsoncpp \
         -L../../../thirdparty/lib/linux64/log4cplus -llog4cplus \
         -L../../../thirdparty/lib/linux64/curl -lcurl \
