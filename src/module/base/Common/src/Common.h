@@ -7,6 +7,11 @@
 #include "Log.h"
 #include "message/BaseMessage.h"
 
+namespace cv
+{
+    class Mat;
+}
+
 // 本机监听的端口类型
 enum PortType
 {
@@ -125,6 +130,9 @@ namespace Common
 
     // 数据写入文件
     ABSTRACT_EXPORT bool writeFile(std::string fileName, std::string &fileData);
+
+    // 获取Mat
+    ABSTRACT_EXPORT std::shared_ptr<cv::Mat> getMat(std::string &data);
 
     // 读文件
     ABSTRACT_EXPORT std::string readFile(std::string fileName);

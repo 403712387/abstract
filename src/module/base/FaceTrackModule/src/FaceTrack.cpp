@@ -1,3 +1,5 @@
+#include <QRect>
+#include <vector>
 #include <QDateTime>
 #include "FaceTrack.h"
 #include "FaceChoose.h"
@@ -5,6 +7,11 @@
 #include "TrackCondition.h"
 #include "VideoFrameMessage.h"
 #include "FaceTrackManagerAgent.h"
+#include "facedetection/facedetectcnn.h"
+#include "opencv2/opencv.hpp"
+
+#define DETECT_BUFFER_SIZE 0x20000
+
 FaceTrack::FaceTrack(FaceTrackManagerAgent *managerAgent)
     :ThreadHandler("trackFace")
 {
@@ -16,6 +23,7 @@ bool FaceTrack::init(std::shared_ptr<TrackCondition> trackInfo)
 {
     LOG_I(mClassName, "begin face track, track info:" << trackInfo->toString());
     mTrackInfo = trackInfo;
+    mFaceDetectBuffer = (unsigned char *)malloc(DETECT_BUFFER_SIZE);
     mFaceDetectInterval = mTrackInfo->getFrameRate() * mFaceDetectIntervalRatio;
     mTrackThread = std::make_shared<Thread>(this);
     mTrackThread->start();
@@ -26,6 +34,13 @@ bool FaceTrack::uninit()
 {
     LOG_I(mClassName, "end face track, track info:" << mTrackInfo->toString());
     mTrackThread->stop();
+
+    // 释放人脸检测结果的内存
+    if (NULL != mFaceDetectBuffer)
+    {
+        free(mFaceDetectBuffer);
+        mFaceDetectBuffer = NULL;
+    }
 }
 
 // 接收到视频帧
@@ -71,6 +86,7 @@ std::shared_ptr<Error> FaceTrack::workThread()
     // 停止跟踪，从队列中选择出来人脸质量较好的人脸
     chooseAllFace(true);
     LOG_I(mClassName, "end face track thread, track info:" << mTrackInfo->toString());
+    return Common::noError();
 }
 
 // 选择人脸
@@ -166,13 +182,36 @@ void FaceTrack::processVideoFrame(std::shared_ptr<VideoFrameInfo> videoFrame)
 // 检测人脸
 void FaceTrack::detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
 {
+    // 初始化内存
+    memset(mFaceDetectBuffer, 0, DETECT_BUFFER_SIZE);
+    std::shared_ptr<cv::Mat> frameMat = Common::getMat(*videoFrame->getFrameData());
+    int * detectResult = facedetect_cnn(mFaceDetectBuffer, (unsigned char*)(frameMat->ptr(0)), frameMat->cols, frameMat->rows, (int)frameMat->step);
 
+    // 校对人脸
+    std::vector<QRect> newFaceRects;
+    for(int i = 0; i < (detectResult ? *detectResult : 0); i++)
+    {
+        short * p = ((short*)(detectResult+1))+142*i;
+        int left = p[0];
+        int top = p[1];
+        int width = p[2];
+        int height = p[3];
+        //int confidence = p[4];
+        int angle = p[5];
+
+       QRect rect(left, top, width, height);
+       newFaceRects.push_back(rect);
+    }
+
+    // 选择人脸
 }
 
 // 跟踪人脸位置
 void FaceTrack::trackFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
 {
+    // 跟踪人脸
 
+    // 选择人脸
 }
 
 // 发送跟踪到的人脸

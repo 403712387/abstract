@@ -27,6 +27,7 @@ void FaceChoose::receiveFaceTrackInfo(std::shared_ptr<TrackFaceInfo> face)
 {
     ++mReceiveFaceCount;
     mLastFaceTime = QDateTime::currentDateTime();
+    mLastReceiveFaceInfo = face;
     if (mListFaceInfo.size() < mListFaceInfo.size())
     {
         mListFaceInfo.push_back(face);
@@ -50,6 +51,12 @@ void FaceChoose::receiveFaceTrackInfo(std::shared_ptr<TrackFaceInfo> face)
             *minElement = face;
         }
     }
+}
+
+// 获取接收的最后一张人脸图片的信息
+std::shared_ptr<TrackFaceInfo> FaceChoose::getLastReceiveFaceInfo()
+{
+    return mLastReceiveFaceInfo;
 }
 
 // 获取接收到的人脸的个数

@@ -46,6 +46,7 @@ void fastFaceDetect()
         ++imageCount;
 
         // 绘制矩形
+        int angle = 0;
         for(int i = 0; i < (pResults ? *pResults : 0); i++)
         {
             short * p = ((short*)(pResults+1))+142*i;
@@ -54,7 +55,7 @@ void fastFaceDetect()
             int w = p[2];
             int h = p[3];
             //int confidence = p[4];
-            //int angle = p[5];
+            angle = p[5];
 
             rectangle(image, cv::Rect(x, y, w, h), cv::Scalar(0, 255, 0), 2);
         }
@@ -63,6 +64,7 @@ void fastFaceDetect()
         std::vector<int> param;
         param.push_back(cv::IMWRITE_JPEG_QUALITY);
         param.push_back(85);
+        cv::drawT
         cv::imwrite(outputFile, image, param);
     }
     free(pBuffer);

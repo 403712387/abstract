@@ -4,6 +4,7 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QFileInfoList>
 #include "Common.h"
+#include "opencv2/opencv.hpp"
 
 #ifndef WIN32
 #include <sys/prctl.h>
@@ -284,6 +285,26 @@ bool Common::writeFile(std::string fileName, std::string &fileData)
 
     file.close();
     return true;
+}
+
+
+// 获取Mat
+std::shared_ptr<cv::Mat> Common::getMat(std::string &data)
+{
+    std::shared_ptr<cv::Mat> result;
+    cv::Mat image;
+    try
+    {
+        cv::Mat bitStream(cv::Size((int)data.size(), 1), CV_8U, (void *)data.data());
+        cv::imdecode(bitStream, cv::IMREAD_COLOR, &image);
+    }
+    catch (...)
+    {
+        return result;
+    }
+
+    result = std::make_shared<cv::Mat>(image);
+    return result;
 }
 
 // 读文件

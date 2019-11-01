@@ -30,6 +30,7 @@ INCLUDEPATH += ./src \
 win32 {
 LIBS += -L../../../bin/abstract/lib/module -lCommon -lCoreModule \
         -L../../../../thirdparty/lib/windows64/Qt -lQt5Core \
+        -L../../../../thirdparty/lib/windows64/facedetection -lfacedetection \
         -L../../../../thirdparty/lib/windows64/openCV -lopencv_core400 -lopencv_video400 -lopencv_videoio400 -lopencv_highgui400 -lopencv_ml400 -lopencv_objdetect400 -lopencv_imgcodecs400 -lopencv_imgproc400 \
         -lopencv_flann400 -lopencv_gapi400 -lopencv_dnn400 -lopencv_photo400 -lopencv_calib3d400
 }

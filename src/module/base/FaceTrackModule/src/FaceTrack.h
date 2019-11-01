@@ -68,6 +68,8 @@ private:
     float                           mFaceDetectIntervalRatio = 1.0;
     int                             mFaceDetectInterval = 24;       // 隔多少帧进行一次人脸检测
     QMap<long long, std::shared_ptr<FaceChoose>>    mMapFaceChoose;     // 跟踪出来的人脸放入此map中
+
+    unsigned char                   *mFaceDetectBuffer = NULL;       // 人脸检测的结果
 };
 
 #endif

@@ -24,6 +24,9 @@ public:
     // 接收人脸信息
     void receiveFaceTrackInfo(std::shared_ptr<TrackFaceInfo> face);
 
+    // 获取接收的最后一张人脸图片的信息
+    std::shared_ptr<TrackFaceInfo> getLastReceiveFaceInfo();
+
     // 获取接收到的人脸的个数
     int getReceiveFaceTrackCount();
 
@@ -47,6 +50,7 @@ private:
     int                 mChooseFaceCount = 0;   // 已经选中的人脸
 
     QDateTime           mLastFaceTime;          // 最后一次的送达时间
+    std::shared_ptr<TrackFaceInfo>  mLastReceiveFaceInfo;   // 接收到的最后一张人脸图片的信息
     int                 mListFaceCount = 5;
     int                 mLowFaceQuailtyInList = 0;      // 队列中最低的人脸质量
     std::vector<std::shared_ptr<TrackFaceInfo>>   mListFaceInfo;  // 接收到的人脸信息
