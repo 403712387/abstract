@@ -19,7 +19,7 @@ INCLUDEPATH += \
             ../../module/base/HttpModule/src \
             ../../module/base/ChooseBestModule/src \
             ../../module/base/FFmpegIngestModule/src \
-            ../../module/base/TrackModule/src \
+            ../../module/base/FaceTrackModule/src \
             ../../module/base/ServiceStatusModule/src \
             ../../module/base/ConfigureModule/src \
             ../../module/business/AbstractModule/src \
@@ -27,7 +27,7 @@ INCLUDEPATH += \
 
 win32 {
 LIBS += -L../../bin/abstract/lib/module -lCommon -lCoreModule -lHttpModule -lServiceStatusModule -lConfigureModule -lChooseBestModule \
-        -lFFmpegIngestModule -lFaceTrackPersonModule -lAbstractModule \
+        -lFFmpegIngestModule -lFaceTrackModule -lAbstractModule \
         -L../../../thirdparty/lib/windows64/Qt -lQt5Core \
         -L../../../thirdparty/lib/windows64/jsoncpp  -ljsoncpp
 }
