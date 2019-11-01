@@ -138,7 +138,7 @@ def compileOneModule(modulePath, module):
     os.system("make clean")
     if os.system("make -j %d "%cpu_count()) != 0:
         os.chdir(currentPath)
-        print("---------compile module " + module + ", please check code---------")
+        print("---------compile module " + module + " fail, please check code---------")
         return False
 
     os.chdir(currentPath)

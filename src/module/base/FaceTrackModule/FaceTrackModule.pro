@@ -43,8 +43,6 @@ LIBS += -L../../../bin/abstract/lib/module -lCommon -lCoreModule \
 HEADERS += \
     src/*.h \
     ./src/common/*.h \
-    ./src/ObjectDetect/*.h \
-    ./src/tracking/*.h \
     ./src/OpencvExtra/face/src/*.hpp \
     ./src/OpencvExtra/quality/src/*.hpp \
     ./src/OpencvExtra/tracking/src/*.hpp \
@@ -63,8 +61,6 @@ HEADERS += \
 SOURCES += \
     src/*.cpp \
     ./src/common/*.cpp \
-    ./src/ObjectDetect/*.cpp \
-    ./src/tracking/*.cpp \
     ./src/OpencvExtra/face/src/*.cpp \
     ./src/OpencvExtra/face/samples/*.cpp \
     ./src/OpencvExtra/plot/src/*.cpp \
