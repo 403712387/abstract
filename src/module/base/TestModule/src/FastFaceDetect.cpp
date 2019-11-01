@@ -57,14 +57,14 @@ void fastFaceDetect()
             //int confidence = p[4];
             angle = p[5];
 
-            rectangle(image, cv::Rect(x, y, w, h), cv::Scalar(0, 255, 0), 2);
+            cv::putText(image, std::to_string(angle), cv::Point(x, y), cv::FONT_HERSHEY_SIMPLEX, 4, (255, 0, 0));
+            cv::rectangle(image, cv::Rect(x, y, w, h), cv::Scalar(0, 255, 0), 2);
         }
 
         // 保存图片
         std::vector<int> param;
         param.push_back(cv::IMWRITE_JPEG_QUALITY);
         param.push_back(85);
-        cv::drawT
         cv::imwrite(outputFile, image, param);
     }
     free(pBuffer);

@@ -8,13 +8,13 @@ OBJECTS_DIR = ../../../output/TestModule
 MOC_DIR = ../../../output/TestModule
 
 INCLUDEPATH += ./src \
-            ../TrackModule/src/OpencvExtra/face/samples \
-            ../TrackModule/src/OpencvExtra/quality/samples \
-            ../TrackModule/src/OpencvExtra/tracking/samples \
-            ../TrackModule/src/OpencvExtra/face/include \
-            ../TrackModule/src/OpencvExtra/quality/include \
-            ../TrackModule/src/OpencvExtra/tracking/include \
-            ../TrackModule/src/OpencvExtra/plot/include \
+            ../FaceTrackModule/src/OpencvExtra/face/samples \
+            ../FaceTrackModule/src/OpencvExtra/quality/samples \
+            ../FaceTrackModule/src/OpencvExtra/tracking/samples \
+            ../FaceTrackModule/src/OpencvExtra/face/include \
+            ../FaceTrackModule/src/OpencvExtra/quality/include \
+            ../FaceTrackModule/src/OpencvExtra/tracking/include \
+            ../FaceTrackModule/src/OpencvExtra/plot/include \
             ../Common/src \
             ../Common/src/log \
             ../Common/src/info \
