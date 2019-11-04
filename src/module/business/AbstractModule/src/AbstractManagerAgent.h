@@ -35,6 +35,9 @@ public:
     // 拉流异常
     bool ingestException(std::shared_ptr<IngestInfo> ingestInfo, std::shared_ptr<Error> reason);
 
+    // 接收到跟踪出来的人脸信息
+    void receiveFaceInfo(std::shared_ptr<TrackFaceInfo> faceInfo);
+
     // ffmpeg拉流的回应
     void processFFmpegIngestResponse(std::shared_ptr<IngestInfo> ingestInfo, std::shared_ptr<VideoFormat> format, std::shared_ptr<Error> failReason);
 

@@ -1,3 +1,4 @@
+#include "FaceInfoMessage.h"
 #include "AbstractManager.h"
 #include "TrackStopMessage.h"
 #include "TrackStartMessage.h"
@@ -17,6 +18,7 @@ AbstractManager::AbstractManager(MessageRoute *messageRoute)
     subscribeMessage(Abstract_Stop_Message);
     subscribeMessage(Abstract_Start_Message);
     subscribeMessage(Ingest_Exception_Message);
+    subscribeMessage(Face_Info_Message);
 }
 
 // 初始化模块
@@ -56,6 +58,9 @@ std::shared_ptr<BaseResponse> AbstractManager::onProcessMessage(std::shared_ptr<
         break;
     case Ingest_Exception_Message:  // 拉流异常
         result = onProcessIngestExceptionMessage(message);
+        break;
+    case Face_Info_Message:     // 跟踪出来的人脸信息
+        result = onProcessFaceInfoMessage(message);
         break;
     }
 
@@ -116,6 +121,21 @@ std::shared_ptr<BaseResponse> AbstractManager::onProcessIngestExceptionMessage(s
     }
 
     mAgent->ingestException(exceptionMessage->getIngestInfo(), exceptionMessage->getExceptionReason());
+    return result;
+}
+
+// 处理跟踪出来的人脸信息
+std::shared_ptr<BaseResponse> AbstractManager::onProcessFaceInfoMessage(std::shared_ptr<BaseMessage> &message)
+{
+    std::shared_ptr<BaseResponse> result;
+    std::shared_ptr<FaceInfoMessage> faceMessage = std::dynamic_pointer_cast<FaceInfoMessage>(message);
+    if (NULL == faceMessage.get())
+    {
+        LOG_E(mClassName, "receive face info message, but message is NULL, message info:" << message->toString());
+        return result;
+    }
+
+    mAgent->receiveFaceInfo(faceMessage->getFaceInfo());
     return result;
 }
 

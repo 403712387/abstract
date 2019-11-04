@@ -1,10 +1,14 @@
+#include <QDir>
 #include <algorithm>
-#include "TrackCondition.h"
+#include <QFileInfo>
+#include <QCoreApplication>
 #include "IngestInfo.h"
 #include "FrameRatio.h"
 #include "VideoFormat.h"
 #include "AbstractTask.h"
 #include "StopAbstract.h"
+#include "TrackFaceInfo.h"
+#include "TrackCondition.h"
 #include "AbstractCommon.h"
 #include "AbstractManager.h"
 #include "AbstractCondition.h"
@@ -128,6 +132,29 @@ bool AbstractManagerAgent::ingestException(std::shared_ptr<IngestInfo> ingestInf
     }
 
     return true;
+}
+
+// 接收到跟踪出来的人脸信息
+void AbstractManagerAgent::receiveFaceInfo(std::shared_ptr<TrackFaceInfo> faceInfo)
+{
+    // 暂时把跟踪出来的人脸保存到本地
+    QString path = "./track/" + QString::fromStdString(faceInfo->getAbstractId());
+
+    // 创建目录
+    QString currentPath = QCoreApplication::applicationDirPath();
+    QString imagePath = QDir::toNativeSeparators(currentPath + path);
+    Common::createPath(imagePath.toStdString());
+
+    // 写背景大图文件
+    QString backgroundImagePath = QDir::toNativeSeparators(imagePath + "/" + QString::fromStdString(std::to_string(faceInfo->getFaceId())) + ".jpg");
+    std::string imageData = Common::getImageData(faceInfo->getImageMat().get(), 85);
+    Common::writeFile(backgroundImagePath.toStdString(), imageData);
+
+    // 写人脸小图
+    QString faceImagePath = QDir::toNativeSeparators(imagePath + "/" + QString::fromStdString(std::to_string(faceInfo->getFaceId())) + "_face.jpg");
+    std::shared_ptr<cv::Mat> faceMat = Common::getSubMat(faceInfo->getImageMat().get(), faceInfo->getFaceRect());
+    std::string faceData = Common::getImageData(faceMat.get(), 85);
+    Common::writeFile(faceImagePath.toStdString(), faceData);
 }
 
 // ffmpeg拉流的回应

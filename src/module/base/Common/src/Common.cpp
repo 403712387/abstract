@@ -347,6 +347,40 @@ std::shared_ptr<cv::Mat> Common::resizeMat(cv::Mat *mat, QRect rect)
     return result;
 }
 
+// 根据Mat,获取数据
+std::string Common::getImageData(cv::Mat *mat, int compressRate)
+{
+    if (NULL == mat)
+    {
+        return "";
+    }
+
+    std::vector<int> param;
+    param.push_back(cv::IMWRITE_JPEG_QUALITY);
+    param.push_back(compressRate);
+
+    std::vector<uchar> data;
+    cv::imencode(".jpg", *mat, data, param);
+    return std::string((char *)data.data(), data.size());
+}
+
+// 获取子Mat
+std::shared_ptr<cv::Mat> Common::getSubMat(cv::Mat *mat, QRect rect)
+{
+    std::shared_ptr<cv::Mat> result;
+    QRect imageRect(0, 0, mat->cols, mat->rows);
+    if (!imageRect.contains(rect))
+    {
+        return result;
+    }
+
+    cv::Rect cvRect(rect.left(), rect.top(), rect.width(), rect.height());
+    cv::Mat subMat = cv::Mat(*mat, cvRect);
+    result = std::make_shared<cv::Mat>(subMat.clone());
+
+    return result;
+}
+
 // 读文件
 std::string Common::readFile(std::string fileName)
 {

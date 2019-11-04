@@ -140,6 +140,12 @@ namespace Common
     // 缩放mat
     ABSTRACT_EXPORT std::shared_ptr<cv::Mat> resizeMat(cv::Mat *mat, QRect rect);
 
+    // 根据Mat,获取数据
+    ABSTRACT_EXPORT std::string getImageData(cv::Mat *mat, int compressRate);
+
+    // 获取子Mat
+    ABSTRACT_EXPORT std::shared_ptr<cv::Mat> getSubMat(cv::Mat *mat, QRect rect);
+
     // 读文件
     ABSTRACT_EXPORT std::string readFile(std::string fileName);
 
