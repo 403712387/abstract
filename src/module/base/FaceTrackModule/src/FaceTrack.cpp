@@ -171,7 +171,7 @@ bool FaceTrack::removeFace(long long faceId)
 void FaceTrack::processVideoFrame(std::shared_ptr<VideoFrameInfo> videoFrame)
 {
     // 人脸跟踪
-    if (videoFrame->getFrameIndex() > 0 )
+    if (videoFrame->getFrameIndex() > 0)
     {
         trackFacePosition(videoFrame);
     }

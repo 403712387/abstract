@@ -84,6 +84,10 @@ std::shared_ptr<BaseResponse> FaceTrackManager::onProcessStartTrackMessage(std::
     {
         mAgent->startTrack(startMessage->getTrackInfo());
     }
+    else
+    {
+        mAgent->clearTrackBuffer(startMessage->getTrackInfo());
+    }
 
     return response;
 }

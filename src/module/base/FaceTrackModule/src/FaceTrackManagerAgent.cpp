@@ -60,6 +60,13 @@ bool FaceTrackManagerAgent::startTrack(std::shared_ptr<TrackCondition> trackInfo
     return true;
 }
 
+// 清空跟踪的缓存
+void FaceTrackManagerAgent::clearTrackBuffer(std::shared_ptr<TrackCondition> trackInfo)
+{
+    // 清空的缓存
+    mVideoFrameBuffer.remove(trackInfo->getAbstractId());
+}
+
 // 停止跟踪
 bool FaceTrackManagerAgent::stopTrack(std::string abstractId)
 {

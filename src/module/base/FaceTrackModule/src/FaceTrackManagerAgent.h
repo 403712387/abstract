@@ -25,6 +25,9 @@ public:
     // 开始跟踪
     bool startTrack(std::shared_ptr<TrackCondition> trackInfo);
 
+    // 清空跟踪的缓存
+    void clearTrackBuffer(std::shared_ptr<TrackCondition> trackInfo);
+
     // 停止跟踪
     bool stopTrack(std::string abstractId);
 
