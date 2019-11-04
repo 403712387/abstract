@@ -66,7 +66,18 @@ bool FaceChoose::trackFace(std::shared_ptr<cv::Mat> imageMat, QDateTime imageDat
 // 更新人脸位置
 void FaceChoose::updateFacePosition(cv::Rect facePosition)
 {
+    // 创建跟踪算分类
+    cv::Ptr<cv::Tracker> tracker = createTrackerByName(mTrackAlgorithmName);
+    if (NULL == tracker.get())
+    {
+        LOG_E(mClassName, "upate face position fail, create track fail, track algorithm:" << mTrackAlgorithmName);
+        return;
+    }
 
+    mTrackAlgorithm.reset();
+    mTrackAlgorithm = tracker;
+    cv::Rect2d roiRect(facePosition.x, facePosition.y, facePosition.width, facePosition.height);
+    mTrackAlgorithm->init(*mLastReceiveFaceInfo->getImageMat(), roiRect);
 }
 
 // 接收人脸信息
