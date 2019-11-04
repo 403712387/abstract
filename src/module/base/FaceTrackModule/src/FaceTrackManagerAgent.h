@@ -2,6 +2,7 @@
 #define FACE_TRACK_MANAGER_AGENT_H
 #include "Common.h"
 
+class TrackFaceInfo;
 class TrackCondition;
 class VideoFrameInfo;
 class FaceTrackManager;
@@ -27,6 +28,9 @@ public:
 
     // 接收到视频帧
     bool receiveVideoFrame(std::shared_ptr<VideoFrameInfo> frame);
+
+    // 发送跟踪出来的人脸
+    void sendTrackFace(std::shared_ptr<TrackFaceInfo> face);
 
 private:
     std::string     mClassName = "FaceTrackManagerAgent";

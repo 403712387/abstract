@@ -1,6 +1,7 @@
 #ifndef FACE_TRACK_H
 #define FACE_TRACK_H
 #include <QMap>
+#include <QDateTime>
 #include "Queue.h"
 #include "Thread.h"
 #include "BaseMessage.h"
@@ -58,7 +59,13 @@ protected:
     bool removeFace(long long faceId);
 
     // 更新人脸位置
-    std::set<long long> updateFaceRect(std::vector<cv::Rect> &faceNewRects);
+    void updateFaceRect(std::shared_ptr<VideoFrameInfo> videoFrame, std::shared_ptr<cv::Mat> imageMat, std::vector<cv::Rect> &faceNewRects);
+
+    // 选择一个重叠的面积最多的人脸
+    std::pair<long long, int> chooseCoincideFaceId(cv::Rect newFacePosition);
+
+    // 创建新的人脸信息
+    bool createFaceChoose(std::shared_ptr<cv::Mat> imageMat, cv::Rect facePosition, QDateTime imageDataBirthday);
 
 private:
     std::string                     mClassName = "FaceTrack";

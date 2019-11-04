@@ -41,3 +41,9 @@ bool FaceTrackManagerAgent::receiveVideoFrame(std::shared_ptr<VideoFrameInfo> fr
 {
     return true;
 }
+
+// 发送跟踪出来的人脸
+void FaceTrackManagerAgent::sendTrackFace(std::shared_ptr<TrackFaceInfo> face)
+{
+
+}

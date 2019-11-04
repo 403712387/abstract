@@ -3,6 +3,8 @@
 #include <QDateTime>
 #include "FaceTrack.h"
 #include "FaceChoose.h"
+#include "TrackCommon.h"
+#include "TrackFaceInfo.h"
 #include "VideoFrameInfo.h"
 #include "TrackCondition.h"
 #include "VideoFrameMessage.h"
@@ -166,15 +168,16 @@ bool FaceTrack::removeFace(long long faceId)
 // 处理接收到的视频帧
 void FaceTrack::processVideoFrame(std::shared_ptr<VideoFrameInfo> videoFrame)
 {
+    // 人脸跟踪
+    if (videoFrame->getFrameIndex() > 0 )
+    {
+        trackFacePosition(videoFrame);
+    }
+
     if (0 == (videoFrame->getFrameIndex() % mFaceDetectInterval))
     {
         // 人脸检测
         detectFacePosition(videoFrame);
-    }
-    else
-    {
-        // 人脸跟踪
-        trackFacePosition(videoFrame);
     }
 }
 
@@ -232,14 +235,8 @@ void FaceTrack::detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
         newFaceRects.push_back(cv::Rect(0, 0, roiRect.width(), roiRect.height()));
     }
 
-    // 更新人脸位置
-    std::set<long long> trackDoneFaces = updateFaceRect(newFaceRects);
-
-    // 选择人脸
-    for (long long faceId : trackDoneFaces)
-    {
-        chooseFaceFromList(faceId, true);
-    }
+    // 更新了人脸位置
+    updateFaceRect(videoFrame, image, newFaceRects);
 }
 
 // 跟踪人脸位置
@@ -253,24 +250,92 @@ void FaceTrack::trackFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
     }
 
     // 跟踪人脸
+    std::set<long long> traceFaceIds;
     QMapIterator<long long, std::shared_ptr<FaceChoose>> iter(mMapFaceChoose);
     while(iter.hasNext())
     {
         iter.next();
+
+        std::shared_ptr<FaceChoose> faceChoose = iter.value();
+        bool ret = faceChoose->trackFace(frameMat, videoFrame->getBirthday());
+        if (!ret)
+        {
+            traceFaceIds.insert(iter.key());
+        }
     }
 
-    // 选择人脸
+    // 处理跟踪结束的人脸
+    for (long long faceId : traceFaceIds)
+    {
+        chooseFaceFromList(faceId, true);
+    }
 }
 
 // 更新人脸位置
-std::set<long long> FaceTrack::updateFaceRect(std::vector<cv::Rect> &faceNewRects)
+void FaceTrack::updateFaceRect(std::shared_ptr<VideoFrameInfo> videoFrame, std::shared_ptr<cv::Mat> imageMat, std::vector<cv::Rect> &faceNewRects)
 {
-    std::set<long long> traceDoneFaceIds;
-    return traceDoneFaceIds;
+    int coincideArea = 60;
+    for (cv::Rect newPosition : faceNewRects)
+    {
+        std::pair<long long, int> ret = chooseCoincideFaceId(newPosition);
+        if (ret.second < coincideArea)
+        {
+            // 创建新的人脸信息
+            createFaceChoose(imageMat, newPosition, videoFrame->getBirthday());
+            continue;
+        }
+
+        std::shared_ptr<FaceChoose> faceChoose = mMapFaceChoose.value(ret.first);
+        if (NULL == faceChoose.get())
+        {
+            continue;
+        }
+
+        faceChoose->updateFacePosition(newPosition);
+    }
+}
+
+// 选择一个重叠的面积最多的人脸
+std::pair<long long, int> FaceTrack::chooseCoincideFaceId(cv::Rect newFacePosition)
+{
+    std::pair<long long, int> result = {-1, 0};
+    QRect detectPosition(newFacePosition.x, newFacePosition.y, newFacePosition.width, newFacePosition.height);
+    QMapIterator<long long, std::shared_ptr<FaceChoose>> iter(mMapFaceChoose);
+    while(iter.hasNext())
+    {
+        iter.next();
+        std::shared_ptr<FaceChoose> faceChoose = iter.value();
+        QRect trackPosition = faceChoose->getLastReceiveFaceInfo()->getFaceRect();
+        QRect coincidePosition = trackPosition.intersected(detectPosition);
+
+        // 跟踪出来的和检测出来的矩形没有交集
+        if (!coincidePosition.isValid())
+        {
+            continue;
+        }
+
+        // 计算交集的面积
+        int coincide = (coincidePosition.width() * coincidePosition.height() * 100) / trackPosition.width() * trackPosition.height();
+        if (coincide > result.second)
+        {
+            result.first = iter.key();
+            result.second = coincide;
+        }
+    }
+    return result;
+}
+
+// 创建新的人脸信息
+bool FaceTrack::createFaceChoose(std::shared_ptr<cv::Mat> imageMat, cv::Rect facePosition, QDateTime imageDataBirthday)
+{
+    std::shared_ptr<FaceChoose> faceChoose = std::make_shared<FaceChoose>(getFaceId(), mTrackInfo, mTrackAlgorithm);
+    faceChoose->init(imageMat, facePosition, imageDataBirthday);
+    mMapFaceChoose[faceChoose->getFaceId()] = faceChoose;
+    return true;
 }
 
 // 发送跟踪到的人脸
 void FaceTrack::sendTrackFaceResult(std::shared_ptr<TrackFaceInfo> face)
 {
-
+    mManagerAgent->sendTrackFace(face);
 }
