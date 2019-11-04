@@ -134,6 +134,12 @@ namespace Common
     // 获取Mat
     ABSTRACT_EXPORT std::shared_ptr<cv::Mat> getMat(std::string &data);
 
+    // 获取图片压缩率(检测的图片太大的话，把大图片压缩成小图片再处理, 把imageRect压缩为standRect)
+    ABSTRACT_EXPORT int getCompressRatio(QRect imageRect, QRect standRect);
+
+    // 缩放mat
+    ABSTRACT_EXPORT std::shared_ptr<cv::Mat> resizeMat(cv::Mat *mat, QRect rect);
+
     // 读文件
     ABSTRACT_EXPORT std::string readFile(std::string fileName);
 
@@ -154,6 +160,9 @@ namespace Common
 
     // 判断是否为有效的url
     ABSTRACT_EXPORT bool isValidUrl(std::string url);
+
+    // 扩大roi矩形区域(第二个参数是倍数，如果是3倍，则宽，高为之前宽，高的3倍，面积是之前的9倍)
+    ABSTRACT_EXPORT QRect extenedRoiRect(QRect roiRect, int times, QRect imageRect);
 }
 
 #endif

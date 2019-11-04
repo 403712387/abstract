@@ -8,7 +8,6 @@
 #include "VideoFrameMessage.h"
 #include "FaceTrackManagerAgent.h"
 #include "facedetection/facedetectcnn.h"
-#include "opencv2/opencv.hpp"
 
 #define DETECT_BUFFER_SIZE 0x20000
 
@@ -185,33 +184,89 @@ void FaceTrack::detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
     // 初始化内存
     memset(mFaceDetectBuffer, 0, DETECT_BUFFER_SIZE);
     std::shared_ptr<cv::Mat> frameMat = Common::getMat(*videoFrame->getFrameData());
-    int * detectResult = facedetect_cnn(mFaceDetectBuffer, (unsigned char*)(frameMat->ptr(0)), frameMat->cols, frameMat->rows, (int)frameMat->step);
+    if (NULL == frameMat.get())
+    {
+        LOG_E(mClassName, "receive video frame , but Mat is NULL, track condition:" << mTrackInfo->toString() << ", video frame info:" << videoFrame->toString());
+        return;
+    }
 
-    // 校对人脸
-    std::vector<QRect> newFaceRects;
+    // 缩放人脸（减小图片分辨率,加快检测速度）
+    static QRect maxRect(0, 0, 640, 360);
+    std::shared_ptr<cv::Mat> image = frameMat;
+    if (image->cols > maxRect.width() || image->rows > maxRect.height())
+    {
+        QRect imageRect(0, 0, image->cols, image->rows);
+        if (1 == mImageCompressRatio)
+        {
+            // 图片的压缩率只用计算一次，因为视频的宽和高不会改变
+            mImageCompressRatio = Common::getCompressRatio(imageRect, maxRect);
+        }
+        QRect compressRect(0, 0, imageRect.width() / mImageCompressRatio, imageRect.height() / mImageCompressRatio);
+        image = Common::resizeMat(image.get(), compressRect);
+    }
+
+    // 检测人脸
+    int *detectResult = facedetect_cnn(mFaceDetectBuffer, (unsigned char*)(image->ptr(0)), image->cols, image->rows, (int)image->step);
+
+    // 检测出来的人脸的位置
+    std::vector<cv::Rect> newFaceRects;
     for(int i = 0; i < (detectResult ? *detectResult : 0); i++)
     {
         short * p = ((short*)(detectResult+1))+142*i;
-        int left = p[0];
-        int top = p[1];
-        int width = p[2];
-        int height = p[3];
+        int left = p[0] * mImageCompressRatio;
+        int top = p[1] * mImageCompressRatio;
+        int width = p[2] * mImageCompressRatio;
+        int height = p[3] * mImageCompressRatio;
         //int confidence = p[4];
-        int angle = p[5];
+        //int angle = p[5];
 
-       QRect rect(left, top, width, height);
-       newFaceRects.push_back(rect);
+        // 过滤掉比较小的人脸
+        if (width < mMinFaceWidth)
+        {
+            continue;
+        }
+
+        // 扩大roi区域
+        QRect roiRect(left, top, width, height);
+        roiRect = Common::extenedRoiRect(roiRect, 2, QRect(0, 0, frameMat->cols, frameMat->rows));
+        newFaceRects.push_back(cv::Rect(0, 0, roiRect.width(), roiRect.height()));
     }
 
+    // 更新人脸位置
+    std::set<long long> trackDoneFaces = updateFaceRect(newFaceRects);
+
     // 选择人脸
+    for (long long faceId : trackDoneFaces)
+    {
+        chooseFaceFromList(faceId, true);
+    }
 }
 
 // 跟踪人脸位置
 void FaceTrack::trackFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
 {
+    std::shared_ptr<cv::Mat> frameMat = Common::getMat(*videoFrame->getFrameData());
+    if (NULL == frameMat.get())
+    {
+        LOG_E(mClassName, "receive video frame , but Mat is NULL, track condition:" << mTrackInfo->toString() << ", video frame info:" << videoFrame->toString());
+        return;
+    }
+
     // 跟踪人脸
+    QMapIterator<long long, std::shared_ptr<FaceChoose>> iter(mMapFaceChoose);
+    while(iter.hasNext())
+    {
+        iter.next();
+    }
 
     // 选择人脸
+}
+
+// 更新人脸位置
+std::set<long long> FaceTrack::updateFaceRect(std::vector<cv::Rect> &faceNewRects)
+{
+    std::set<long long> traceDoneFaceIds;
+    return traceDoneFaceIds;
 }
 
 // 发送跟踪到的人脸

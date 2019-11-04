@@ -2,11 +2,14 @@
 #include "FaceChoose.h"
 #include "TrackFaceInfo.h"
 #include "TrackCondition.h"
+#include "TrackCondition.h"
+#include "samples_utility.hpp"
 
-FaceChoose::FaceChoose(long long faceId, std::shared_ptr<TrackCondition> trackCondition)
+FaceChoose::FaceChoose(long long faceId, std::shared_ptr<TrackCondition> trackCondition, std::string trackALgorithm)
 {
     mFaceId = faceId;
     mTrackCondition = trackCondition;
+    mTrackAlgorithmName = trackALgorithm;
     mListFaceCount = trackCondition->getAbstractFaceCount() * 2 + 2;
 }
 
@@ -20,6 +23,50 @@ long long FaceChoose::getFaceId()
 std::shared_ptr<TrackCondition> FaceChoose::getTarckCondition()
 {
     return mTrackCondition;
+}
+
+// 初始化人脸信息
+bool FaceChoose::init(std::shared_ptr<cv::Mat> imageMat, cv::Rect facePosition, QDateTime imageDataBirthday)
+{
+    // 创建跟踪算分类
+    mTrackAlgorithm = createTrackerByName(mTrackAlgorithmName);
+    if (NULL == mTrackAlgorithm.get())
+    {
+        LOG_E(mClassName, "create track fail, track algorithm:" << mTrackAlgorithmName);
+        return false;
+    }
+    cv::Rect2d roiRect(facePosition.x, facePosition.y, facePosition.width, facePosition.height);
+    mTrackAlgorithm->init(*imageMat, roiRect);
+
+    // 初始化人脸位置
+    QRect faceRect(facePosition.x, facePosition.y, facePosition.width, facePosition.height);
+    int faceQuality = getFaceQuality(imageMat, facePosition);
+    std::shared_ptr<TrackFaceInfo> faceInfo = std::make_shared<TrackFaceInfo>(mTrackCondition->getAbstractId(), mFaceId, imageMat, faceRect, faceQuality, imageDataBirthday);
+    receiveFaceTrackInfo(faceInfo);
+    LOG_I(mClassName, "init successful, first face info:" << faceInfo->toString() << ", algorithm:" << mTrackAlgorithmName);
+    return true;
+}
+
+// 跟踪人脸
+bool FaceChoose::trackFace(std::shared_ptr<cv::Mat> imageMat, QDateTime imageDataBirthday)
+{
+    cv::Rect2d currentPosition(0, 0, 0, 0);
+    bool ret = mTrackAlgorithm->update(*imageMat, currentPosition);
+    if (ret)
+    {
+        // 获取图片质量
+        cv::Rect faceRect(currentPosition.x, currentPosition.y, currentPosition.width, currentPosition.height);
+        int faceQuality = getFaceQuality(imageMat, faceRect);
+        std::shared_ptr<TrackFaceInfo> faceInfo = std::make_shared<TrackFaceInfo>(mTrackCondition->getAbstractId(), mFaceId, imageMat, QRect(faceRect.x, faceRect.y, faceRect.width, faceRect.height), faceQuality, imageDataBirthday);
+        receiveFaceTrackInfo(faceInfo);
+    }
+    return ret;
+}
+
+// 更新人脸位置
+void FaceChoose::updateFacePosition(cv::Rect facePosition)
+{
+
 }
 
 // 接收人脸信息
@@ -105,4 +152,10 @@ bool FaceChoose::chooseDone()
         return true;
     }
     return false;
+}
+
+// 获取人脸图片质量
+int FaceChoose::getFaceQuality(std::shared_ptr<cv::Mat> imageMat, cv::Rect roiRect)
+{
+    return roiRect.width;
 }

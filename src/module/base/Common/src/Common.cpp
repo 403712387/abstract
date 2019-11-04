@@ -307,6 +307,46 @@ std::shared_ptr<cv::Mat> Common::getMat(std::string &data)
     return result;
 }
 
+
+// 获取图片压缩率(检测的图片太大的话，把大图片压缩成小图片再处理, 把imageRect压缩为standRect)
+int Common::getCompressRatio(QRect imageRect, QRect standRect)
+{
+    int result = 1;
+    static std::vector<float> ratio = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f};
+
+    // 如果比标准的小，则不用压缩
+    if (standRect.width() > imageRect.width() && standRect.height() > imageRect.height())
+    {
+        return result;
+    }
+
+    // 压缩到标准以内
+    float widthRatio = (float)imageRect.width() / (float)standRect.width();
+    float heightRatio = (float)imageRect.height() / (float)standRect.height();
+    float maxRatio = std::max(widthRatio, heightRatio);
+
+    for (int i = 1; i < ratio.size(); ++i)
+    {
+        if (maxRatio < ratio[i])
+        {
+            result = (int)ratio[i];
+            break;
+        }
+    }
+    return result;
+}
+
+// 缩放mat
+std::shared_ptr<cv::Mat> Common::resizeMat(cv::Mat *mat, QRect rect)
+{
+    std::shared_ptr<cv::Mat> result;
+    cv::Mat outMat;
+    cv::Size cvSize(rect.width(), rect.height());
+    cv::resize(*mat, outMat, cvSize);
+    result = std::make_shared<cv::Mat>(outMat);
+    return result;
+}
+
 // 读文件
 std::string Common::readFile(std::string fileName)
 {
@@ -397,4 +437,19 @@ bool Common::isValidUrl(std::string url)
         return false;
     }
     return (url.find("/") != std::string::npos);
+}
+
+// 扩大roi矩形区域(第二个参数是倍数，如果是3倍，则宽，高为之前宽，高的3倍，面积是之前的9倍)
+QRect Common::extenedRoiRect(QRect roiRect, int times, QRect imageRect)
+{
+    if (times <= 1)
+    {
+        return roiRect;
+    }
+
+    int newWidth = roiRect.width() * times;
+    int newHeight = roiRect.height() * times;
+    QRect result(roiRect.x() - (newWidth - roiRect.width())/2, roiRect.y() - (newHeight - roiRect.height())/2, newWidth, newHeight);
+    result = result.intersected(imageRect);
+    return result;
 }

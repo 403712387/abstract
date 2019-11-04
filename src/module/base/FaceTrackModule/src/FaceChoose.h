@@ -4,6 +4,10 @@
 #include <memory>
 #include <vector>
 #include <QDateTime>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/utility.hpp>
+#include <opencv2/tracking.hpp>
+#include <opencv2/videoio.hpp>
 
 /*
  * 从跟踪出来的人脸中选择出人脸图片
@@ -13,16 +17,22 @@ class TrackFaceInfo;
 class FaceChoose
 {
 public:
-    FaceChoose(long long faceId, std::shared_ptr<TrackCondition> trackCondition);
+    FaceChoose(long long faceId, std::shared_ptr<TrackCondition> trackCondition, std::string trackALgorithm);
+
+    // 初始化人脸信息
+    bool init(std::shared_ptr<cv::Mat> imageMat, cv::Rect facePosition, QDateTime imageDataBirthday);
+
+    // 跟踪人脸
+    bool trackFace(std::shared_ptr<cv::Mat> imageMat, QDateTime imageDataBirthday);
+
+    // 更新人脸位置
+    void updateFacePosition(cv::Rect facePosition);
 
     // 获取人脸ID
     long long getFaceId();
 
     // 获取跟踪的条件
     std::shared_ptr<TrackCondition> getTarckCondition();
-
-    // 接收人脸信息
-    void receiveFaceTrackInfo(std::shared_ptr<TrackFaceInfo> face);
 
     // 获取接收的最后一张人脸图片的信息
     std::shared_ptr<TrackFaceInfo> getLastReceiveFaceInfo();
@@ -43,11 +53,20 @@ public:
     bool chooseDone();
 
 private:
+    // 接收人脸信息
+    void receiveFaceTrackInfo(std::shared_ptr<TrackFaceInfo> face);
+
+    // 获取人脸图片质量
+    int getFaceQuality(std::shared_ptr<cv::Mat> imageMat, cv::Rect roiRect);
+
+private:
     std::string         mClassName = "FaceChoose";
+    std::string         mTrackAlgorithmName = "KCF";
     long long           mFaceId = 0;
     std::shared_ptr<TrackCondition> mTrackCondition;
     int                 mReceiveFaceCount = 0;
     int                 mChooseFaceCount = 0;   // 已经选中的人脸
+    cv::Ptr<cv::Tracker>    mTrackAlgorithm;
 
     QDateTime           mLastFaceTime;          // 最后一次的送达时间
     std::shared_ptr<TrackFaceInfo>  mLastReceiveFaceInfo;   // 接收到的最后一张人脸图片的信息

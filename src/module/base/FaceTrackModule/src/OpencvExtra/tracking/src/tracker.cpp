@@ -91,7 +91,7 @@ bool Tracker::update( InputArray image, Rect2d& boundingBox )
     return false;
   }
 
-  if( image.empty() )
+  if(image.empty())
     return false;
 
   return updateImpl( image.getMat(), boundingBox );

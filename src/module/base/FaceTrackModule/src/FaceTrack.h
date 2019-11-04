@@ -5,6 +5,7 @@
 #include "Thread.h"
 #include "BaseMessage.h"
 #include "ThreadHandler.h"
+#include "opencv2/opencv.hpp"
 /*
  * 处理人脸跟踪逻辑的类
 */
@@ -56,10 +57,14 @@ protected:
     // 删除人脸
     bool removeFace(long long faceId);
 
+    // 更新人脸位置
+    std::set<long long> updateFaceRect(std::vector<cv::Rect> &faceNewRects);
+
 private:
     std::string                     mClassName = "FaceTrack";
     FaceTrackManagerAgent           *mManagerAgent= NULL;
     std::shared_ptr<TrackCondition> mTrackInfo;
+    std::string                     mTrackAlgorithm = "KCF";        // 跟踪算法
 
     std::shared_ptr<Thread>         mTrackThread;       // 跟踪类
     Queue<BaseMessage>              mMessageQueue;
@@ -70,6 +75,8 @@ private:
     QMap<long long, std::shared_ptr<FaceChoose>>    mMapFaceChoose;     // 跟踪出来的人脸放入此map中
 
     unsigned char                   *mFaceDetectBuffer = NULL;       // 人脸检测的结果
+    int                             mMinFaceWidth = 32;     // 最小的人脸大小，如果框的区域小于这个人脸，则忽略
+    int                             mImageCompressRatio = 1;
 };
 
 #endif
