@@ -453,3 +453,9 @@ QRect Common::extenedRoiRect(QRect roiRect, int times, QRect imageRect)
     result = result.intersected(imageRect);
     return result;
 }
+
+// 判断是否是本地文件
+bool Common::isLocalFile(std::string url)
+{
+    return std::string::npos == url.find("://");
+}

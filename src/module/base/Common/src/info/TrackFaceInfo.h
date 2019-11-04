@@ -1,5 +1,6 @@
 #ifndef TRACK_FACE_INFO_H
 #define TRACK_FACE_INFO_H
+#include "Base.h"
 #include <string>
 #include <memory>
 #include <QRect>
@@ -12,7 +13,7 @@ namespace cv
 {
 class Mat;
 }
-class TrackFaceInfo
+class ABSTRACT_EXPORT TrackFaceInfo
 {
 public:
     TrackFaceInfo(std::string abstractId, long long faceId, std::shared_ptr<cv::Mat> imageMat, QRect faceRect, int quality, QDateTime birthday);

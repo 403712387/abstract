@@ -8,6 +8,7 @@
 class FaceTrackManagerAgent;
 class ABSTRACT_EXPORT FaceTrackManager : public BaseProcess
 {
+    friend class FaceTrackManagerAgent;
 public:
     FaceTrackManager(MessageRoute *messageRoute);
 

@@ -33,7 +33,10 @@ public:
     bool stopAbstract(std::shared_ptr<StopAbstract> condition);
 
     // 拉流异常
-    bool ingestException(std::shared_ptr<IngestInfo> ingestInfo);
+    bool ingestException(std::shared_ptr<IngestInfo> ingestInfo, std::shared_ptr<Error> reason);
+
+    // ffmpeg拉流的回应
+    void processFFmpegIngestResponse(std::shared_ptr<IngestInfo> ingestInfo, std::shared_ptr<VideoFormat> format, std::shared_ptr<Error> failReason);
 
 private:
     // 处理添加任务

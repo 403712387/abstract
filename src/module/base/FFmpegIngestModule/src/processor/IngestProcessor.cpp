@@ -213,7 +213,7 @@ std::shared_ptr<Error> IngestProcessor::workThread()
                 if (readFailCount > 25)
                 {
                     // 如果一秒没有读取到数据，则认为出现了异常
-                    mManagerAgent->ingestException(mIngestInfo, Stop_Exception);
+                    mManagerAgent->ingestException(mIngestInfo, Stop_Ingest_Exception);
                     break;
                 }
                 else

@@ -51,6 +51,9 @@ std::string BaseClass::getMessageTypeName(MessageType type)
     case Track_Stop_Message:        // 停止跟踪消息
         result = "stop track";
         break;
+    case Face_Info_Message:     // 跟踪出来的人脸信息
+        result = "face info";
+        break;
     }
     return result;
 }
@@ -102,6 +105,10 @@ MessageType BaseClass::getMessageTypeByName(std::string name)
     else if ("stop track" == name)
     {
         result = Track_Stop_Message;
+    }
+    else if ("face info" == name)
+    {
+        result = Face_Info_Message;
     }
     return result;
 }

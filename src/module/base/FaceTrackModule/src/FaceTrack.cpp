@@ -28,6 +28,7 @@ bool FaceTrack::init(std::shared_ptr<TrackCondition> trackInfo)
     mFaceDetectInterval = mTrackInfo->getFrameRate() * mFaceDetectIntervalRatio;
     mTrackThread = std::make_shared<Thread>(this);
     mTrackThread->start();
+    return true;
 }
 
 // 反初始化
@@ -42,6 +43,7 @@ bool FaceTrack::uninit()
         free(mFaceDetectBuffer);
         mFaceDetectBuffer = NULL;
     }
+    return true;
 }
 
 // 接收到视频帧

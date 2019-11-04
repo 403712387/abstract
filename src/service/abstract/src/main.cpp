@@ -7,7 +7,6 @@
 #include "ConfigureModule.h"
 #include "AbstractManager.h"
 #include "FaceTrackManager.h"
-#include "ChooseBestManager.h"
 #include "ServiceStatusModule.h"
 #include "FFmpegIngestManager.h"
 
@@ -36,7 +35,6 @@ int main(int argc, char *argv[])
     ConfigureModule configureManager(&messageRoute);
     HttpModule httpManager(&messageRoute);
     FaceTrackManager trackFaceManager(&messageRoute);
-    ChooseBestManager chooseBestManager(&messageRoute);
     ServiceStatusModule serviceStatusManager(&messageRoute);
     FFmpegIngestManager ffmageIngestManager(&messageRoute);
     AbstractManager abstraceManager(&messageRoute);

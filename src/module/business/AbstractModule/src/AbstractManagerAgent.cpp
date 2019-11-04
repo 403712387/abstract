@@ -100,9 +100,52 @@ bool AbstractManagerAgent::stopAbstract(std::shared_ptr<StopAbstract> condition)
 }
 
 // 拉流异常
-bool AbstractManagerAgent::ingestException(std::shared_ptr<IngestInfo> ingestInfo)
+bool AbstractManagerAgent::ingestException(std::shared_ptr<IngestInfo> ingestInfo, std::shared_ptr<Error> reason)
 {
+    // 如果不存在对应的任务，则直接返回
+    std::shared_ptr<AbstractTask> task = getTask(ingestInfo->getStreamId());
+    if (NULL == task.get())
+    {
+        LOG_E(mClassName, "process ingest exception fail, not find task, ingest info:" << ingestInfo->toString());
+        return false;
+    }
+
+    // 停止拉流
+    task->getTransaction(ingestInfo->getRequestId())->stopTransaction(reason->getErrorReason());
+    mManager->sendStopIngestStreamMessage(ingestInfo);
+    if (Common::isLocalFile(ingestInfo->getStreamUrl()) && Stop_End_Of_File == reason->getErrorCode())
+    {
+        // 如果为本地文件，并且到了文件尾，则直接删除任务
+        removeTask(task->getAbstractId());
+    }
+    else
+    {
+        // 继续拉流分析
+        std::shared_ptr<IngestInfo> ingest = std::make_shared<IngestInfo>(task->getAbstractId(), task->getAbstractCondition()->getStreamUrl());
+        std::shared_ptr<AbstractTransaction> transaction = std::make_shared<AbstractTransaction>(ingest);
+        task->addTransaction(transaction);
+        ffmpegIngestStream(ingest, Async_Trans_Message);
+    }
+
     return true;
+}
+
+// ffmpeg拉流的回应
+void AbstractManagerAgent::processFFmpegIngestResponse(std::shared_ptr<IngestInfo> ingestInfo, std::shared_ptr<VideoFormat> format, std::shared_ptr<Error> failReason)
+{
+    // 如果不存在对应的任务，则直接返回
+    std::shared_ptr<AbstractTask> task = getTask(ingestInfo->getStreamId());
+    if (NULL == task.get())
+    {
+        LOG_E(mClassName, "process ffmpeg ingest response fail, not find task, ingest info:" << ingestInfo->toString());
+        return;
+    }
+
+    if (NULL != failReason.get())
+    {
+        // 拉流失败
+        ingestException(ingestInfo, failReason);
+    }
 }
 
 // 处理添加任务
@@ -216,6 +259,7 @@ bool AbstractManagerAgent::isExistTask(std::string id)
 bool AbstractManagerAgent::removeTask(std::string id)
 {
     std::unique_lock<std::mutex> autoLock(mMapTaskLock);
+    LOG_I(mClassName, "remove task, task id:"  << id);
     return mMapTask.remove(id);
 }
 

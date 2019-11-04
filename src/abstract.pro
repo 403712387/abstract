@@ -7,7 +7,6 @@ SUBDIRS += \
         ./module/base/HttpModule/HttpModule.pro \
         ./module/base/FaceTrackModule/FaceTrackModule.pro \
         ./module/base/TestModule/TestModule.pro \
-        ./module/base/ChooseBestModule/ChooseBestModule.pro \
         ./module/base/FFmpegIngestModule/FFmpegIngestModule.pro \
         ./module/base/ServiceStatusModule/ServiceStatusModule.pro \
         ./module/base/ConfigureModule/ConfigureModule.pro \

@@ -3,6 +3,7 @@
 #include "TrackStartMessage.h"
 #include "StopIngestMessage.h"
 #include "AbstractStopMessage.h"
+#include "FFmpegIngestMessage.h"
 #include "AbstractManagerAgent.h"
 #include "AbstractStartMessage.h"
 #include "IngestExceptionMessage.h"
@@ -37,6 +38,7 @@ void AbstractManager::uninit()
 {
     LOG_I(mClassName, "begin uninit");
     mAgent->uninit();
+    BaseProcess::uninit();
     LOG_I(mClassName, "end uninit");
 }
 
@@ -63,7 +65,12 @@ std::shared_ptr<BaseResponse> AbstractManager::onProcessMessage(std::shared_ptr<
 // 处理消息的回应
 void AbstractManager::onProcessResponse(std::shared_ptr<BaseResponse> &response)
 {
-
+    switch(response->getMessage()->getMessageType())
+    {
+    case FFmpeg_Ingest_Message:     // ffmpeg 拉流的消息
+        onProcessFFmepgIngestResponse(response);
+        break;
+    }
 }
 
 // 处理开始提取人脸/人体的消息
@@ -108,8 +115,29 @@ std::shared_ptr<BaseResponse> AbstractManager::onProcessIngestExceptionMessage(s
         return result;
     }
 
-    mAgent->ingestException(exceptionMessage->getIngestInfo());
+    mAgent->ingestException(exceptionMessage->getIngestInfo(), exceptionMessage->getExceptionReason());
     return result;
+}
+
+// 处理ffmpeg拉流的回应
+void AbstractManager::onProcessFFmepgIngestResponse(std::shared_ptr<BaseResponse> &response)
+{
+    std::shared_ptr<FFmpegIngestResponse> ingestResponse = std::dynamic_pointer_cast<FFmpegIngestResponse>(response);
+    if (NULL == ingestResponse.get())
+    {
+        LOG_E(mClassName, "receive ffmpeg ingest response, but response is NULL, response info:" << response->toString());
+        return ;
+    }
+
+    std::shared_ptr<FFmpegIngestMessage> ingestMessage = std::dynamic_pointer_cast<FFmpegIngestMessage>(ingestResponse->getMessage());
+
+    // 如果是同步消息，则忽略
+    if (Sync_Trans_Message == ingestMessage->getTransType())
+    {
+        return;
+    }
+
+    mAgent->processFFmpegIngestResponse(ingestMessage->getFFmpegIngestInfo(), ingestResponse->getVideoFormat(), ingestResponse->getError());
 }
 
 // 停止拉流

@@ -37,6 +37,9 @@ private:
     // 处理拉流异常的消息
     std::shared_ptr<BaseResponse> onProcessIngestExceptionMessage(std::shared_ptr<BaseMessage> &message);
 
+    // 处理ffmpeg拉流的回应
+    void onProcessFFmepgIngestResponse(std::shared_ptr<BaseResponse> &response);
+
     // 停止拉流
     bool sendStopIngestStreamMessage(std::shared_ptr<IngestInfo> ingest);
 

@@ -58,7 +58,7 @@ enum VideoFrameType
 enum StopIngestReason
 {
     Stop_End_Of_File = 0,       // 到文件结尾了
-    Stop_Exception,             // 拉流过程中出现异常了
+    Stop_Ingest_Exception,           // 拉流过程中出现异常了
 };
 
 // 提取的类型
@@ -163,6 +163,9 @@ namespace Common
 
     // 扩大roi矩形区域(第二个参数是倍数，如果是3倍，则宽，高为之前宽，高的3倍，面积是之前的9倍)
     ABSTRACT_EXPORT QRect extenedRoiRect(QRect roiRect, int times, QRect imageRect);
+
+    // 判断是否是本地文件
+    ABSTRACT_EXPORT bool isLocalFile(std::string url);
 }
 
 #endif

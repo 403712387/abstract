@@ -21,18 +21,24 @@ FaceTrackManager::FaceTrackManager(MessageRoute *messageRoute)
 // 初始化模块
 bool FaceTrackManager::init()
 {
+    LOG_I(mClassName, "begin init");
+    mAgent->init();
+    LOG_I(mClassName, "end init");
     return true;
 }
 
 void FaceTrackManager::beginWork()
 {
-
+    LOG_I(mClassName, "begin work");
 }
 
 // 卸载模块
 void FaceTrackManager::uninit()
 {
-
+    LOG_I(mClassName, "begin uninit");
+    mAgent->uninit();
+    BaseProcess::uninit();
+    LOG_I(mClassName, "end uninit");
 }
 
 // 处理消息的函数
@@ -109,7 +115,7 @@ std::shared_ptr<BaseResponse> FaceTrackManager::onProcessIngestExceptionMessage(
         LOG_E(mClassName, "receive ingest exception message, but message is NULL, message info:" << message->toString());
     }
 
-    mAgent->pauseTrack(exceptionMessage->getIngestInfo()->getStreamId());
+    mAgent->IngestException(exceptionMessage);
     return response;
 }
 
@@ -123,6 +129,6 @@ std::shared_ptr<BaseResponse> FaceTrackManager::onProcessVideoFrameMessage(std::
         LOG_E(mClassName, "receive video frame message, but message is NULL, message info:" << message->toString());
     }
 
-    mAgent->receiveVideoFrame(frameMessage->getVideoFrameInfo());
+    mAgent->receiveVideoFrame(frameMessage);
     return response;
 }
