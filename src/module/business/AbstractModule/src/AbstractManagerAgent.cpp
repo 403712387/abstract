@@ -1,4 +1,5 @@
 #include <QDir>
+#include <sstream>
 #include <algorithm>
 #include <QFileInfo>
 #include <QCoreApplication>
@@ -146,12 +147,17 @@ void AbstractManagerAgent::receiveFaceInfo(std::shared_ptr<TrackFaceInfo> faceIn
     Common::createPath(imagePath.toStdString());
 
     // 写背景大图文件
-    QString backgroundImagePath = QDir::toNativeSeparators(imagePath + "/" + QString::fromStdString(std::to_string(faceInfo->getFaceId())) + ".jpg");
+    static int index = 0;
+    std::stringstream backgroundImageName;
+    backgroundImageName << faceInfo->getFaceId() << "_" << index++ << ".jpg";
+    QString backgroundImagePath = QDir::toNativeSeparators(imagePath + "/" + QString::fromStdString(backgroundImageName.str()));
     std::string imageData = Common::getImageData(faceInfo->getImageMat().get(), 85);
     Common::writeFile(backgroundImagePath.toStdString(), imageData);
 
     // 写人脸小图
-    QString faceImagePath = QDir::toNativeSeparators(imagePath + "/" + QString::fromStdString(std::to_string(faceInfo->getFaceId())) + "_face.jpg");
+    std::stringstream faceImageName;
+    faceImageName << faceInfo->getFaceId() << "_" << index++ << "face.jpg";
+    QString faceImagePath = QDir::toNativeSeparators(imagePath + "/" + QString::fromStdString(faceImageName.str()));
     std::shared_ptr<cv::Mat> faceMat = Common::getSubMat(faceInfo->getImageMat().get(), faceInfo->getFaceRect());
     std::string faceData = Common::getImageData(faceMat.get(), 85);
     Common::writeFile(faceImagePath.toStdString(), faceData);
