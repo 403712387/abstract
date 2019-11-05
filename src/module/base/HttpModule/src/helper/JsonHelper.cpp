@@ -133,19 +133,18 @@ std::pair<std::shared_ptr<AbstractCondition>, std::shared_ptr<Error>> JsonHelper
 
     try
     {
-        std::string key = "abstract";
-        if (readerRoot.isMember(key) && readerRoot[key].isMember("url"))
+        if (readerRoot.isMember("url"))
         {
-            std::string url = readerRoot[key]["url"].asString();
+            std::string url = readerRoot["url"].asString();
             std::set<AbstractType> types;
             AbstractModel model = Abstract_Quality_First;
 
             // 提取类型
-            if (readerRoot[key].isMember("type"))
+            if (readerRoot.isMember("type"))
             {
-                for (int i = 0; i < readerRoot[key]["type"].size(); ++i)
+                for (int i = 0; i < readerRoot["type"].size(); ++i)
                 {
-                    types.insert(Common::getAbstractTypeByName(readerRoot[key]["type"][i].asString()));
+                    types.insert(Common::getAbstractTypeByName(readerRoot["type"][i].asString()));
                 }
             }
 
@@ -155,16 +154,16 @@ std::pair<std::shared_ptr<AbstractCondition>, std::shared_ptr<Error>> JsonHelper
             }
 
             // 提取模式
-            if (readerRoot[key].isMember("model"))
+            if (readerRoot.isMember("model"))
             {
-                model = Common::getAbstractModelByName(readerRoot[key]["model"].asString());
+                model = Common::getAbstractModelByName(readerRoot["model"].asString());
             }
 
             // 提取的张数
             int abstractCount = 2;
-            if (readerRoot[key].isMember("abstract_count"))
+            if (readerRoot.isMember("abstract_count"))
             {
-                abstractCount = readerRoot[key]["abstract_count"].asInt();
+                abstractCount = readerRoot["abstract_count"].asInt();
             }
 
             result.first = std::make_shared<AbstractCondition>(url, types, model, abstractCount);
