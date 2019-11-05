@@ -251,7 +251,7 @@ void FaceTrack::detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
     }
 
     // 更新了人脸位置
-    updateFaceRect(videoFrame, image, newFaceRects);
+    updateFaceRect(videoFrame, frameMat, newFaceRects);
 }
 
 // 跟踪人脸位置
