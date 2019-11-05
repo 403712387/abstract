@@ -219,10 +219,15 @@ void FaceTrack::detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
         QRect compressRect(0, 0, imageRect.width() / mImageCompressRatio, imageRect.height() / mImageCompressRatio);
         image = Common::resizeMat(image.get(), compressRect);
     }
-
+#if 1
+    QDateTime beginDetect = QDateTime::currentDateTime();
+#endif
     // 检测人脸
     int *detectResult = facedetect_cnn(mFaceDetectBuffer, (unsigned char*)(image->ptr(0)), image->cols, image->rows, (int)image->step);
-
+#if 1
+    QDateTime endDetect = QDateTime::currentDateTime();
+    LOG_I(mClassName, "detece face spend " << endDetect.toMSecsSinceEpoch() - beginDetect.toMSecsSinceEpoch() << "ms");
+#endif
     // 检测出来的人脸的位置
     std::vector<cv::Rect> newFaceRects;
     for(int i = 0; i < (detectResult ? *detectResult : 0); i++)

@@ -57,7 +57,7 @@ std::shared_ptr<BaseResponse> FaceTrackManager::onProcessMessage(std::shared_ptr
         result = onProcessIngestExceptionMessage(message);
         break;
     case Video_Frame_Message:   // 拉取的视频帧信息
-        //result = onProcessVideoFrameMessage(message);
+        result = onProcessVideoFrameMessage(message);
         break;
     }
 
