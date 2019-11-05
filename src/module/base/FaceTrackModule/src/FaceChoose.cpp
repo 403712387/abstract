@@ -86,7 +86,7 @@ void FaceChoose::receiveFaceTrackInfo(std::shared_ptr<TrackFaceInfo> face)
     ++mReceiveFaceCount;
     mLastFaceTime = QDateTime::currentDateTime();
     mLastReceiveFaceInfo = face;
-    if (mListFaceInfo.size() < mListFaceInfo.size())
+    if (mListFaceInfo.size() < mListFaceCount)
     {
         mListFaceInfo.push_back(face);
     }
