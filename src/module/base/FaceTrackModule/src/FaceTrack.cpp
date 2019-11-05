@@ -165,7 +165,7 @@ bool FaceTrack::chooseFaceFromList(long long faceId, bool trackDone)
     }
     if (trackDone)
     {
-        LOG_D(mClassName, "trace face done, face id:" << faceId << ", trace condition:" << mTrackInfo->toString());
+        LOG_I(mClassName, "trace face done, face id:" << faceId << ", trace condition:" << mTrackInfo->toString());
     }
 
     return true;
@@ -344,12 +344,13 @@ bool FaceTrack::createFaceChoose(std::shared_ptr<cv::Mat> imageMat, cv::Rect fac
     std::shared_ptr<FaceChoose> faceChoose = std::make_shared<FaceChoose>(getFaceId(), mTrackInfo, mTrackAlgorithm);
     faceChoose->init(imageMat, facePosition, imageDataBirthday);
     mMapFaceChoose[faceChoose->getFaceId()] = faceChoose;
-    LOG_D(mClassName, "new face in video, face id:" << faceChoose->getFaceId() << ", position:" << Common::getRectString(QRect(facePosition.x, facePosition.y, facePosition.width, facePosition.height)) << ", trace condition:" << mTrackInfo->toString());
+    LOG_I(mClassName, "new face in video, face id:" << faceChoose->getFaceId() << ", position:" << Common::getRectString(QRect(facePosition.x, facePosition.y, facePosition.width, facePosition.height)) << ", trace condition:" << mTrackInfo->toString());
     return true;
 }
 
 // 发送跟踪到的人脸
 void FaceTrack::sendTrackFaceResult(std::shared_ptr<TrackFaceInfo> face)
 {
+    LOG_D(mClassName, "send track face, face info:" << face->toString());
     mManagerAgent->sendTrackFace(face);
 }
