@@ -211,11 +211,11 @@ std::pair<std::shared_ptr<StopAbstract>, std::shared_ptr<Error>> JsonHelper::par
             id = readerRoot[key].asString();
 
             // 提取类型
-            if (readerRoot[key].isMember("type"))
+            if (readerRoot.isMember("type"))
             {
-                for (int i = 0; i < readerRoot[key]["type"].size(); ++i)
+                for (int i = 0; i < readerRoot["type"].size(); ++i)
                 {
-                    types.insert(Common::getAbstractTypeByName(readerRoot[key]["type"][i].asString()));
+                    types.insert(Common::getAbstractTypeByName(readerRoot["type"][i].asString()));
                 }
             }
 

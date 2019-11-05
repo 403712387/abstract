@@ -62,7 +62,7 @@ void FaceTrack::ingestException(std::shared_ptr<BaseMessage> message)
 std::shared_ptr<Error> FaceTrack::workThread()
 {
     LOG_I(mClassName, "begin face track thread, track info:" << mTrackInfo->toString());
-    while(!isStop() && !mMessageQueue.empty())
+    while(!isStop() || !mMessageQueue.empty())
     {
         std::shared_ptr<BaseMessage> message = mMessageQueue.popExpiration(10);
         if (NULL == message.get())
