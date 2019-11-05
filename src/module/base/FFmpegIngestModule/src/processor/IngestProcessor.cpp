@@ -86,6 +86,12 @@ std::pair<std::shared_ptr<VideoFormat>, std::shared_ptr<Error>> IngestProcessor:
         return result;
     }
 
+    // 设置参数，防止解析本地文件的时候失败
+    if (Common::isLocalFile(mIngestInfo->getStreamUrl()))
+    {
+        avcodec_parameters_to_context(mVideoCodecContext, mVideoStream->codecpar);
+    }
+
     // 初始化视频信息
     if (!initVideoFormat())
     {
@@ -245,7 +251,7 @@ std::shared_ptr<Error> IngestProcessor::workThread()
         // 把YUV格式的视频转为Mat
         if (NULL == swsContext)
         {
-            swsContext = sws_getContext(frame->width, frame->height, (AVPixelFormat) frame->format, frame->width, frame->height, AVPixelFormat::AV_PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
+            swsContext = sws_getContext(frame->width, frame->height, (AVPixelFormat)frame->format, frame->width, frame->height, AVPixelFormat::AV_PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
         }
         std::shared_ptr<cv::Mat> imageMat = std::make_shared<cv::Mat>(frame->height, frame->width, CV_8UC3);
         int cvLinesizes[1] = {imageMat->step1()};
