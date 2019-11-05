@@ -312,10 +312,10 @@ std::shared_ptr<cv::Mat> Common::getMat(std::string &data)
 int Common::getCompressRatio(QRect imageRect, QRect standRect)
 {
     int result = 1;
-    static std::vector<float> ratio = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f};
+    static std::vector<int> ratio = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
     // 如果比标准的小，则不用压缩
-    if (standRect.width() > imageRect.width() && standRect.height() > imageRect.height())
+    if (standRect.width() >= imageRect.width() && standRect.height() >= imageRect.height())
     {
         return result;
     }
@@ -327,9 +327,9 @@ int Common::getCompressRatio(QRect imageRect, QRect standRect)
 
     for (int i = 1; i < ratio.size(); ++i)
     {
-        if (maxRatio < ratio[i])
+        if ((int)maxRatio <= ratio[i])
         {
-            result = (int)ratio[i];
+            result = ratio[i];
             break;
         }
     }
