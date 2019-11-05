@@ -242,6 +242,10 @@ std::shared_ptr<Error> IngestProcessor::workThread()
         // 解码视频帧
         int gotPicturePtr = 0;
         ret = avcodec_decode_video2(mVideoCodecContext, frame, &gotPicturePtr, packet);
+        if (0 == gotPicturePtr)
+        {
+            continue;
+        }
         if (ret < 0)
         {
             LOG_E(mClassName, "decoder video fail, ingest info:" << mIngestInfo->toString() << ", error reason:" << getErrorReason(ret));
