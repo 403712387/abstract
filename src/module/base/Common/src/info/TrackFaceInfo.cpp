@@ -52,6 +52,6 @@ QDateTime TrackFaceInfo::getBirthday()
 std::string TrackFaceInfo::toString()
 {
     std::stringstream buf;
-    buf << "abstract id:" << mAbstractId  << ", image height:" << mImageMat->rows << ", width:" << mImageMat->cols << "face id:" << mFaceId << ", face rect:" << Common::getRectString(mFaceRect) << ", face quality:" << mFaceQuality << ", birthday:" << mBirthday.toString("yyyy-MM-dd HH:mm:ss.zzz").toStdString();
+    buf << "abstract id:" << mAbstractId  << ", image height:" << mImageMat->rows << ", width:" << mImageMat->cols << ", face id:" << mFaceId << ", face rect:" << Common::getRectString(mFaceRect) << ", face quality:" << mFaceQuality << ", birthday:" << mBirthday.toString("yyyy-MM-dd HH:mm:ss.zzz").toStdString();
     return buf.str();
 }
