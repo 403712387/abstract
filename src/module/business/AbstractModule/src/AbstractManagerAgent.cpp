@@ -45,7 +45,26 @@ bool AbstractManagerAgent::uninit()
 std::pair<std::string, std::shared_ptr<Error>> AbstractManagerAgent::startAbstract(std::shared_ptr<AbstractCondition> condition)
 {
     std::pair<std::string, std::shared_ptr<Error>> result;
+#if 1
+    {
+        // 是否过期
+        QDateTime now = QDateTime::currentDateTime();
+        QDateTime expireTime(QDate(2020,1,1), QTime(01,01,01));
+        if (now.toMSecsSinceEpoch() > expireTime.toMSecsSinceEpoch())
+        {
+            result.second = Common::getError("invalid json info");
+            return result;
+        }
 
+        // 是否超出能力
+        std::unique_lock<std::mutex> autoLocker(mMapTaskLock);
+        if (mMapTask.size() > 1)
+        {
+            result.second = Common::getError("out of capacity");
+            return result;
+        }
+    }
+#endif
     // 判断是否已经存在对应的任务
     std::string id = getAbstractId(condition->getStreamUrl());
     std::shared_ptr<AbstractTask> task = getTask(id);
