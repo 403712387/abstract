@@ -248,6 +248,12 @@ int HttpModule::onProcess(void *cls, MHD_Connection *connection, const char *url
         response = getResponseBody(404, "don not touch me");
     }
 
+    // 打印请求以及回应
+    if (!requestUrl.startsWith("/download/", Qt::CaseInsensitive))
+    {
+        LOG_I(mClassName, "request url:" << url << ", body:" << body << ", response:" << response);
+    }
+
     ret = sendResponse(connection, response, url, httpBodyType);
     return ret ? MHD_YES : MHD_NO;
 }
