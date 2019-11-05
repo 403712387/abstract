@@ -247,7 +247,7 @@ void FaceTrack::detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
         // 扩大roi区域
         QRect roiRect(left, top, width, height);
         roiRect = Common::extenedRoiRect(roiRect, 2, QRect(0, 0, frameMat->cols, frameMat->rows));
-        newFaceRects.push_back(cv::Rect(0, 0, roiRect.width(), roiRect.height()));
+        newFaceRects.push_back(cv::Rect(roiRect.left(), roiRect.top(), roiRect.width(), roiRect.height()));
     }
 
     // 更新了人脸位置
