@@ -29,7 +29,7 @@ bool ConfigureJson::loadConfigure()
         return false;
     }
 
-    std::string cgfService = "cgf_service";
+    std::string cgfService = "abstract_service";
     if (readerRoot.isMember(cgfService))
     {
         // http port
@@ -66,7 +66,7 @@ void ConfigureJson::setHttpPort(int port)
 bool ConfigureJson::saveConfigure()
 {
     Json::Value jsonValue;
-    std::string cgfService = "cgf_service";
+    std::string cgfService = "abstract_service";
 
     // http端口
     jsonValue[cgfService]["http_port"] = mHttpPort;

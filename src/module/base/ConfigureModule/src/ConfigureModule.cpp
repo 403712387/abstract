@@ -72,7 +72,7 @@ void ConfigureModule::setConfigureInfo()
     }
 
     // 设置监听的端口
-    mConfigureInfo->setHttpPort(mConfigureFile->getHttpPort(1224));
+    mConfigureInfo->setHttpPort(mConfigureFile->getHttpPort(1218));
 
     // 设置日志级别
     mConfigureInfo->setLogLevel(common_log::getLogLevel());

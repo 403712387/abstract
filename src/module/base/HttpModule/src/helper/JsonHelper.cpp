@@ -92,7 +92,7 @@ bool JsonHelper::parseConfigure(std::string &info, std::shared_ptr<ConfigureInfo
         }
 
         // http设置
-        std::string cgfService = "cgf_service";
+        std::string cgfService = "abstract_service";
         if (readerRoot.isMember(cgfService))
         {
             // http port
