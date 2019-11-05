@@ -1,12 +1,12 @@
 #include <sstream>
 #include "VideoFrameInfo.h"
 
-VideoFrameInfo::VideoFrameInfo(std::string streamId, long long frameIndex, VideoFrameType frameType, std::shared_ptr<std::string> frameData, long long pts, long long dts)
+VideoFrameInfo::VideoFrameInfo(std::string streamId, long long frameIndex, VideoFrameType frameType, std::shared_ptr<cv::Mat> frameMat, long long pts, long long dts)
 {
     mStreamId = streamId;
     mFrameIndex = frameIndex;
     mFrameType = frameType;
-    mFrameData = frameData;
+    mFrameMat = frameMat;
     mPts = pts;
     mDts = dts;
 }
@@ -30,9 +30,9 @@ VideoFrameType VideoFrameInfo::getFrameType()
 }
 
 // 获取帧的内容
-std::shared_ptr<std::string> VideoFrameInfo::getFrameData()
+std::shared_ptr<cv::Mat> VideoFrameInfo::getFrameMat()
 {
-    return mFrameData;
+    return mFrameMat;
 }
 
 // 获取pts
@@ -47,7 +47,6 @@ long long VideoFrameInfo::getDts()
     return mDts;
 }
 
-
 // 获取生成帧的时间
 QDateTime VideoFrameInfo::getBirthday()
 {
@@ -57,6 +56,6 @@ QDateTime VideoFrameInfo::getBirthday()
 std::string VideoFrameInfo::toString()
 {
     std::stringstream buf;
-    buf << "stream id:" << mStreamId << ", frame index:" << mFrameIndex << ", frame type:" << Common::getVideoFrameTypeName(mFrameType) << ", pts:" << mPts << ", dts:" << mDts << ", frame data size:" << mFrameData->size() << ", birthday:" << mBirthday.toString("yyyy-MM-dd HH:mm:ss.zzz").toStdString();
+    buf << "stream id:" << mStreamId << ", frame index:" << mFrameIndex << ", frame type:" << Common::getVideoFrameTypeName(mFrameType) << ", pts:" << mPts << ", dts:" << mDts << ", birthday:" << mBirthday.toString("yyyy-MM-dd HH:mm:ss.zzz").toStdString();
     return buf.str();
 }

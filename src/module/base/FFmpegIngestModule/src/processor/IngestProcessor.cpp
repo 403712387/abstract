@@ -1,7 +1,9 @@
+#include <QDateTime>
 #include "FrameRatio.h"
 #include "VideoFrameInfo.h"
 #include "IngestProcessor.h"
 #include "FFmpegIngestManagerAgent.h"
+#include "opencv2/opencv.hpp"
 
 IngestProcessor::IngestProcessor(FFmpegIngestManagerAgent *managerAgent, std::shared_ptr<IngestInfo> ingestInfo)
     :ThreadHandler("ffmpegIngest")
@@ -188,6 +190,7 @@ std::shared_ptr<Error> IngestProcessor::workThread()
     av_init_packet(packet);
     QDateTime startTime;
     int readFailCount = 0;
+    SwsContext* swsContext = NULL;
     while (!isStop())
     {
         int ret = av_read_frame(mFormatContext, packet);
@@ -239,9 +242,19 @@ std::shared_ptr<Error> IngestProcessor::workThread()
             continue;
         }
 
+        // 把YUV格式的视频转为Mat
+        if (NULL == swsContext)
+        {
+            swsContext = sws_getContext(frame->width, frame->height, (AVPixelFormat) frame->format, frame->width, frame->height, AVPixelFormat::AV_PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
+        }
+        std::shared_ptr<cv::Mat> imageMat = std::make_shared<cv::Mat>(frame->height, frame->width, CV_8UC3);
+        int cvLinesizes[1] = {imageMat->step1()};
+        sws_scale(swsContext, frame->data, frame->linesize, 0, frame->height, &imageMat->data, cvLinesizes);
+
+        // 视频帧信息
         VideoFrameType frameType = (VideoFrameType)frame->pict_type;
         std::shared_ptr<std::string> frameData = std::make_shared<std::string>((char *)frame->data[0], frame->linesize[0]);
-        std::shared_ptr<VideoFrameInfo> frameInfo = std::make_shared<VideoFrameInfo>(mIngestInfo->getStreamId(), mFrameIndex++, frameType , frameData, packet->pts, packet->dts);
+        std::shared_ptr<VideoFrameInfo> frameInfo = std::make_shared<VideoFrameInfo>(mIngestInfo->getStreamId(), mFrameIndex++, frameType , imageMat, packet->pts, packet->dts);
 
         // 发送视频帧
         mIngestInfo->addFrameCount();
@@ -262,6 +275,11 @@ std::shared_ptr<Error> IngestProcessor::workThread()
     frame = NULL;
     av_packet_free(&packet);
     packet = NULL;
+    if (NULL != swsContext)
+    {
+        sws_freeContext(swsContext);
+        swsContext = NULL;
+    }
     LOG_I(mClassName, "end thread work");
     return error;
 }

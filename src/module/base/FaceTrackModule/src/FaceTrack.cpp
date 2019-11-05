@@ -75,6 +75,7 @@ std::shared_ptr<Error> FaceTrack::workThread()
             if (Ingest_Exception_Message == message->getMessageType())
             {
                 // 拉流出现了异常，选择跟踪出来的质量较好的人脸
+                LOG_I(mClassName, "ingest exception, choose all face, condition:" << mTrackInfo->toString());
                 chooseAllFace(true);
             }
             else if (Video_Frame_Message == message->getMessageType())
@@ -162,6 +163,11 @@ bool FaceTrack::chooseFaceFromList(long long faceId, bool trackDone)
             }
         }
     }
+    if (trackDone)
+    {
+        LOG_D(mClassName, "trace face done, face id:" << faceId << ", trace condition:" << mTrackInfo->toString());
+    }
+
     return true;
 }
 
@@ -192,7 +198,7 @@ void FaceTrack::detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
 {
     // 初始化内存
     memset(mFaceDetectBuffer, 0, DETECT_BUFFER_SIZE);
-    std::shared_ptr<cv::Mat> frameMat = Common::getMat(*videoFrame->getFrameData());
+    std::shared_ptr<cv::Mat> frameMat = videoFrame->getFrameMat();
     if (NULL == frameMat.get())
     {
         LOG_E(mClassName, "receive video frame , but Mat is NULL, track condition:" << mTrackInfo->toString() << ", video frame info:" << videoFrame->toString());
@@ -248,7 +254,7 @@ void FaceTrack::detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
 // 跟踪人脸位置
 void FaceTrack::trackFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
 {
-    std::shared_ptr<cv::Mat> frameMat = Common::getMat(*videoFrame->getFrameData());
+    std::shared_ptr<cv::Mat> frameMat = videoFrame->getFrameMat();
     if (NULL == frameMat.get())
     {
         LOG_E(mClassName, "receive video frame , but Mat is NULL, track condition:" << mTrackInfo->toString() << ", video frame info:" << videoFrame->toString());
@@ -337,6 +343,7 @@ bool FaceTrack::createFaceChoose(std::shared_ptr<cv::Mat> imageMat, cv::Rect fac
     std::shared_ptr<FaceChoose> faceChoose = std::make_shared<FaceChoose>(getFaceId(), mTrackInfo, mTrackAlgorithm);
     faceChoose->init(imageMat, facePosition, imageDataBirthday);
     mMapFaceChoose[faceChoose->getFaceId()] = faceChoose;
+    LOG_D(mClassName, "new face in video, face id:" << faceChoose->getFaceId() << ", position:" << Common::getRectString(QRect(facePosition.x, facePosition.y, facePosition.width, facePosition.height)) << ", trace condition:" << mTrackInfo->toString());
     return true;
 }
 

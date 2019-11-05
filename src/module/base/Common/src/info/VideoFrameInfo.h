@@ -7,10 +7,14 @@
 /*
  * 视频帧的信息
  */
+namespace cv
+{
+class Mat;
+}
 class ABSTRACT_EXPORT VideoFrameInfo
 {
 public:
-    VideoFrameInfo(std::string streamId, long long frameIndex, VideoFrameType frameType, std::shared_ptr<std::string> frameData, long long pts, long long dts);
+    VideoFrameInfo(std::string streamId, long long frameIndex, VideoFrameType frameType, std::shared_ptr<cv::Mat> frameMat, long long pts, long long dts);
 
     // 获取流ID
     std::string getStreamId();
@@ -22,7 +26,7 @@ public:
     VideoFrameType getFrameType();
 
     // 获取帧的内容
-    std::shared_ptr<std::string> getFrameData();
+    std::shared_ptr<cv::Mat> getFrameMat();
 
     // 获取pts
     long long getPts();
@@ -39,7 +43,7 @@ private:
     std::string         mStreamId;
     long long           mFrameIndex = 0;
     VideoFrameType      mFrameType = Video_Frame_I;
-    std::shared_ptr<std::string> mFrameData;
+    std::shared_ptr<cv::Mat> mFrameMat;
     QDateTime           mBirthday =  QDateTime::currentDateTime();
     long long           mPts = 0;
     long long           mDts = 0;
