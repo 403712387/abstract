@@ -138,7 +138,7 @@ bool AbstractManagerAgent::ingestException(std::shared_ptr<IngestInfo> ingestInf
 void AbstractManagerAgent::receiveFaceInfo(std::shared_ptr<TrackFaceInfo> faceInfo)
 {
     // 暂时把跟踪出来的人脸保存到本地
-    QString path = "./track/" + QString::fromStdString(faceInfo->getAbstractId());
+    QString path = "/track/" + QString::fromStdString(faceInfo->getAbstractId());
 
     // 创建目录
     QString currentPath = QCoreApplication::applicationDirPath();

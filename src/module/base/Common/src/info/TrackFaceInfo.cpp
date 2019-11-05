@@ -1,6 +1,7 @@
 #include <sstream>
 #include "Common.h"
 #include "TrackFaceInfo.h"
+#include "opencv2/opencv.hpp"
 
 TrackFaceInfo::TrackFaceInfo(std::string abstractId, long long faceId,  std::shared_ptr<cv::Mat> imageMat, QRect faceRect, int quality, QDateTime birthday)
 {
@@ -51,6 +52,6 @@ QDateTime TrackFaceInfo::getBirthday()
 std::string TrackFaceInfo::toString()
 {
     std::stringstream buf;
-    buf << "abstract id:" << mAbstractId << "face id:" << mFaceId << ", face rect:" << Common::getRectString(mFaceRect) << ", face quality:" << mFaceQuality << ", birthday:" << mBirthday.toString("yyyy-MM-dd HH:mm:ss.zzz").toStdString();
+    buf << "abstract id:" << mAbstractId  << ", image height:" << mImageMat->rows << ", width:" << mImageMat->cols << "face id:" << mFaceId << ", face rect:" << Common::getRectString(mFaceRect) << ", face quality:" << mFaceQuality << ", birthday:" << mBirthday.toString("yyyy-MM-dd HH:mm:ss.zzz").toStdString();
     return buf.str();
 }
