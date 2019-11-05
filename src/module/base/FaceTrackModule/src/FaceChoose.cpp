@@ -161,6 +161,9 @@ int FaceChoose::getChooseFaceCount()
 // 选人脸是否结束
 bool FaceChoose::chooseDone()
 {
+#if 1
+    LOG_I(mClassName, "face id:" << mTrackCondition->getAbstractId() << ", choose face count:" << mChooseFaceCount << ", should choose face count:" << mTrackCondition->getAbstractFaceCount());
+#endif
     if (mListFaceInfo.empty() || mChooseFaceCount >= mTrackCondition->getAbstractFaceCount())
     {
         return true;
