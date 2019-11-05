@@ -141,11 +141,12 @@ bool FaceTrackManagerAgent::removeTracker(std::string id)
 // 删除所有的人脸跟踪的视频流
 void FaceTrackManagerAgent::removeAllTracker()
 {
-    QMapIterator<std::string, std::shared_ptr<FaceTrack>> iter(mMapFaceTrack);
+    QMap<std::string, std::shared_ptr<FaceTrack>> allTrackers(mMapFaceTrack);
+    QMapIterator<std::string, std::shared_ptr<FaceTrack>> iter(allTrackers);
     while (iter.hasNext())
     {
         iter.next();
-        removeTracker(iter.key());
+        stopTrack(iter.key());
     }
 }
 

@@ -168,5 +168,5 @@ bool FaceChoose::chooseDone()
 // 获取人脸图片质量
 int FaceChoose::getFaceQuality(std::shared_ptr<cv::Mat> imageMat, cv::Rect roiRect)
 {
-    return roiRect.width;
+    return roiRect.width * roiRect.height;
 }

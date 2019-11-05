@@ -54,11 +54,11 @@ void fastFaceDetect()
             int y = p[1];
             int w = p[2];
             int h = p[3];
-            //int confidence = p[4];
+            int confidence = p[4];
             angle = p[5];
 
             cv::rectangle(image, cv::Rect(x, y, w, h), cv::Scalar(0, 255, 0), 2);
-            cv::putText(image, std::to_string(angle), cv::Point(x, y), cv::FONT_HERSHEY_COMPLEX, 4, (255, 0, 0), 4);
+            cv::putText(image, std::to_string(confidence), cv::Point(x, y), cv::FONT_HERSHEY_COMPLEX, 4, (255, 0, 0), 4);
         }
 
         // 保存图片

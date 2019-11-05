@@ -14,7 +14,7 @@
 #define DETECT_BUFFER_SIZE 0x20000
 
 FaceTrack::FaceTrack(FaceTrackManagerAgent *managerAgent)
-    :ThreadHandler("trackFace")
+    :ThreadHandler("FaceTrack")
 {
     mManagerAgent = managerAgent;
 }
@@ -83,6 +83,10 @@ std::shared_ptr<Error> FaceTrack::workThread()
                 std::shared_ptr<VideoFrameMessage> frame = std::dynamic_pointer_cast<VideoFrameMessage>(message);
                 processVideoFrame(frame->getVideoFrameInfo());
             }
+            else
+            {
+                LOG_E(mClassName, "exception message, message info:" << message->toString());
+            }
         }
     }
 
@@ -115,7 +119,7 @@ bool FaceTrack::chooseFaceFromList(long long faceId, bool trackDone)
 
     // 判断是否超时
     QDateTime now = QDateTime::currentDateTime();
-    if ((now.toMSecsSinceEpoch() - faceChoose->getLastReceiveTime().toMSecsSinceEpoch()) > mFaceExpire)
+    if ((now.toMSecsSinceEpoch() - faceChoose->getLastReceiveTime().toMSecsSinceEpoch()) > mFaceExpire)  // 数据有积压的时候，这个地方会有异常
     {
         trackDone = true;
     }
@@ -132,8 +136,8 @@ bool FaceTrack::chooseFaceFromList(long long faceId, bool trackDone)
             }
 
             sendTrackFaceResult(face);
-            removeFace(faceId);
         }
+        removeFace(faceId);
     }
     else
     {
@@ -217,13 +221,13 @@ void FaceTrack::detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
     std::vector<cv::Rect> newFaceRects;
     for(int i = 0; i < (detectResult ? *detectResult : 0); i++)
     {
-        short * p = ((short*)(detectResult+1))+142*i;
-        int left = p[0] * mImageCompressRatio;
-        int top = p[1] * mImageCompressRatio;
-        int width = p[2] * mImageCompressRatio;
-        int height = p[3] * mImageCompressRatio;
-        //int confidence = p[4];
-        //int angle = p[5];
+        short * temp = ((short*)(detectResult + 1)) + 142 * i;
+        int left = temp[0] * mImageCompressRatio;
+        int top = temp[1] * mImageCompressRatio;
+        int width = temp[2] * mImageCompressRatio;
+        int height = temp[3] * mImageCompressRatio;
+        //int confidence = temp[4];
+        //int angle = temp[5];
 
         // 过滤掉比较小的人脸
         if (width < mMinFaceWidth)

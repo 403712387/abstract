@@ -76,7 +76,7 @@ private:
     std::shared_ptr<Thread>         mTrackThread;       // 跟踪类
     Queue<BaseMessage>              mMessageQueue;
 
-    int                             mFaceExpire = 3000;     //人脸超时的时间
+    int                             mFaceExpire = 5000;     //人脸超时的时间
     float                           mFaceDetectIntervalRatio = 1.0;
     int                             mFaceDetectInterval = 24;       // 隔多少帧进行一次人脸检测
     QMap<long long, std::shared_ptr<FaceChoose>>    mMapFaceChoose;     // 跟踪出来的人脸放入此map中
