@@ -233,9 +233,9 @@ void FaceTrack::detectFacePosition(std::shared_ptr<VideoFrameInfo> videoFrame)
         int width = temp[2] * mImageCompressRatio;
         int height = temp[3] * mImageCompressRatio;
         int confidence = temp[4];
-        //int angle = temp[5];
+        int angle = temp[5];
 #if 1
-        LOG_E(mClassName, "left:" << left << ", top:" << top << ", width:" << width << ", height:" << height << ", image compress ratio:" << mImageCompressRatio);
+        LOG_E(mClassName, "left:" << left << ", top:" << top << ", width:" << width << ", height:" << height << ", image compress ratio:" << mImageCompressRatio << ", angle:" << angle);
 #endif
         // 过滤掉比较小的人脸或者低置信度的人脸
         if (width < mMinFaceWidth || confidence < mMinConfidence)
