@@ -42,7 +42,7 @@ void faceQuality()
         ++imageCount;
 
         // 绘制结果
-        cv::putText(image, std::to_string(quality), cv::Point(image.cols / 2, image.rows / 2), cv::FONT_HERSHEY_COMPLEX, 2, (255, 0, 0), 2);
+        cv::putText(image, std::to_string(quality), cv::Point(0, image.rows / 2), cv::FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 1);
 
         // 保存图片
         std::vector<int> param;
