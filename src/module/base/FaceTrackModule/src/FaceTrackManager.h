@@ -25,18 +25,15 @@ protected:
     // 处理消息的回应
     virtual void onProcessResponse(std::shared_ptr<BaseResponse> &response);
 
+    // 消息队列中没有消息的时候调用
+    virtual void onIdle();
+
 private:
-    // 处理开始跟踪的消息
-    std::shared_ptr<BaseResponse> onProcessStartTrackMessage(std::shared_ptr<BaseMessage> &message);
+    // 处理人脸位置的信息
+    std::shared_ptr<BaseResponse> onProcessFacePositionMessage(std::shared_ptr<BaseMessage> &message);
 
     // 处理停止跟踪的消息
     std::shared_ptr<BaseResponse> onProcessStopTrackMessage(std::shared_ptr<BaseMessage> &message);
-
-    // 处理拉流异常的消息
-    std::shared_ptr<BaseResponse> onProcessIngestExceptionMessage(std::shared_ptr<BaseMessage> &message);
-
-    // 处理视频帧信息
-    std::shared_ptr<BaseResponse> onProcessVideoFrameMessage(std::shared_ptr<BaseMessage> &message);
 
 private:
     std::shared_ptr<FaceTrackManagerAgent>      mAgent;

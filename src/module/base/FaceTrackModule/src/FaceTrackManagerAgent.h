@@ -4,12 +4,12 @@
 #include "Queue.h"
 #include "Common.h"
 
-class FaceTrack;
 class TrackFaceInfo;
 class TrackCondition;
 class VideoFrameInfo;
 class FaceTrackManager;
-class VideoFrameMessage;
+class FacePositionMessage;
+class FaceTrackProcessor;
 class IngestExceptionMessage;
 class FaceTrackManagerAgent
 {
@@ -22,43 +22,36 @@ public:
     // 反初始化
     bool uninit();
 
-    // 开始跟踪
-    bool startTrack(std::shared_ptr<TrackCondition> trackInfo);
-
-    // 清空跟踪的缓存
-    void clearTrackBuffer(std::shared_ptr<TrackCondition> trackInfo);
-
     // 停止跟踪
     bool stopTrack(std::string abstractId);
 
-    // 拉流异常
-    bool IngestException(std::shared_ptr<IngestExceptionMessage> message);
-
-    // 接收到视频帧
-    bool receiveVideoFrame(std::shared_ptr<VideoFrameMessage> message);
+    // 处理人脸位置消息
+    bool processFacePosition(std::shared_ptr<FacePositionMessage> message);
 
     // 发送跟踪出来的人脸
     void sendTrackFace(std::shared_ptr<TrackFaceInfo> face);
 
-private:
-    // 删除一路人脸跟踪的视频流
-    bool removeTracker(std::string id);
-
-    // 删除所有的人脸跟踪的视频流
-    void removeAllTracker();
-
-    // 添加一路人脸跟踪的流
-    std::shared_ptr<FaceTrack> addTracker(std::shared_ptr<TrackCondition> trackInfo);
-
-    // 获取人脸跟踪处理类
-    std::shared_ptr<FaceTrack> getTracker(std::string id);
+    // 检查人脸跟踪的状态
+    void checkFaceTrackStatus();
 
 private:
-    std::string     mClassName = "FaceTrackManagerAgent";
-    FaceTrackManager    *mManager = NULL;
+    // 根据abstrace id,获取process
+    QMap<long long, std::shared_ptr<FaceTrackProcessor>> getTrackProcessByAbstraceId(std::string abstraceId);
 
-    QMap<std::string, std::shared_ptr<FaceTrack>>        mMapFaceTrack;
-    QMap<std::string, std::shared_ptr<Queue<VideoFrameMessage>>>   mVideoFrameBuffer;      // 缓存的视频帧
+    // 获取人脸跟踪的处理类
+    std::shared_ptr<FaceTrackProcessor> getTrackProcessor(std::string abstractId, long long faceId);
+
+    // 删除人脸跟踪的处理类
+    bool removeTrackProcessor(std::string abstractId, long long faceId);
+
+    // 删除所有的processor
+    void removeAllTrackProcessor();
+
+private:
+    std::string             mClassName = "FaceTrackManagerAgent";
+    FaceTrackManager        *mManager = NULL;
+
+    QMap<std::string, QMap<long long, std::shared_ptr<FaceTrackProcessor>>>  mMapFaceTrackProcessor;    // 跟踪的处理类,QMap<abstractID, QMap<FaceId, processor>>
 };
 
 #endif

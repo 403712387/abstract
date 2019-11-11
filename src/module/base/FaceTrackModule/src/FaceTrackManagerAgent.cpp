@@ -4,7 +4,8 @@
 #include "FaceInfoMessage.h"
 #include "VideoFrameInfo.h"
 #include "FaceTrackManager.h"
-#include "VideoFrameMessage.h"
+#include "FaceTrackProcessor.h"
+#include "FacePositionMessage.h"
 #include "FaceTrackManagerAgent.h"
 #include "IngestExceptionMessage.h"
 
@@ -22,105 +23,33 @@ bool FaceTrackManagerAgent::init()
 // 反初始化
 bool FaceTrackManagerAgent::uninit()
 {
-    removeAllTracker();
+    removeAllTrackProcessor();
     return true;
-}
-
-// 开始跟踪
-bool FaceTrackManagerAgent::startTrack(std::shared_ptr<TrackCondition> trackInfo)
-{
-    // 判断是否已经存在
-    std::shared_ptr<FaceTrack> tracker = getTracker(trackInfo->getAbstractId());
-    if (NULL != tracker.get())
-    {
-        LOG_W(mClassName, "tracker already exist, ignore, tracker condition:" << trackInfo->toString());
-        return true;
-    }
-
-    // 添加tracker
-    tracker = addTracker(trackInfo);
-
-    // 处理缓冲区中的数据
-    std::shared_ptr<Queue<VideoFrameMessage>> bufferQueue = mVideoFrameBuffer.value(trackInfo->getAbstractId());
-    mVideoFrameBuffer.remove(trackInfo->getAbstractId());
-    if (NULL == bufferQueue.get())
-    {
-        return true;
-    }
-
-    while(!bufferQueue->empty())
-    {
-        std::shared_ptr<VideoFrameMessage> message = bufferQueue->pop();
-        if (NULL == message.get())
-        {
-            continue;
-        }
-        receiveVideoFrame(message);
-    }
-    return true;
-}
-
-// 清空跟踪的缓存
-void FaceTrackManagerAgent::clearTrackBuffer(std::shared_ptr<TrackCondition> trackInfo)
-{
-    // 清空的缓存
-    mVideoFrameBuffer.remove(trackInfo->getAbstractId());
 }
 
 // 停止跟踪
 bool FaceTrackManagerAgent::stopTrack(std::string abstractId)
 {
-    // 判断是否已经存在
-    std::shared_ptr<FaceTrack> tracker = getTracker(abstractId);
-    if (NULL == tracker.get())
+    QMap<long long, std::shared_ptr<FaceTrackProcessor>> processors = getTrackProcessByAbstraceId(abstractId);
+    QMapIterator<long long, std::shared_ptr<FaceTrackProcessor>> iter(processors);
+    while(iter.hasNext())
     {
-        LOG_W(mClassName, "stop track fail, not find track, id:" << abstractId);
-        return false;
+        iter.next();
+        std::shared_ptr<FaceTrackProcessor> processor = iter.value();
+
+        // 停止跟踪
+        processor->uninit();
     }
 
-    // 反初始化tracker
-    tracker->uninit();
-
-    // 删除tracker
-    removeTracker(abstractId);
-    return true;
-}
-
-// 拉流异常
-bool FaceTrackManagerAgent::IngestException(std::shared_ptr<IngestExceptionMessage> message)
-{
-    std::string abstractId = message->getIngestInfo()->getStreamId();
-    std::shared_ptr<FaceTrack> tracker = getTracker(abstractId);
-    if (NULL != tracker.get())
-    {
-        tracker->ingestException(message);
-    }
+    // 删除processor
+    removeTrackProcessor(abstractId, 0);
     return true;
 }
 
 // 接收到视频帧
-bool FaceTrackManagerAgent::receiveVideoFrame(std::shared_ptr<VideoFrameMessage> message)
+bool FaceTrackManagerAgent::processFacePosition(std::shared_ptr<FacePositionMessage> message)
 {
-    std::string abstractId = message->getVideoFrameInfo()->getStreamId();
-    std::shared_ptr<FaceTrack> tracker = getTracker(abstractId);
-    if (NULL == tracker.get())
-    {
-        // 如果tracker还没有建立，则先把数据缓存起来
-        if (mVideoFrameBuffer.contains(abstractId))
-        {
-            mVideoFrameBuffer[abstractId]->push(message);
-        }
-        else
-        {
-            std::shared_ptr<Queue<VideoFrameMessage>> queue = std::make_shared<Queue<VideoFrameMessage>>();
-            queue->push(message);
-            mVideoFrameBuffer[abstractId] = queue;
-        }
-    }
-    else
-    {
-        tracker->receiveVideoFrame(message);
-    }
+
     return true;
 }
 
@@ -131,42 +60,86 @@ void FaceTrackManagerAgent::sendTrackFace(std::shared_ptr<TrackFaceInfo> face)
     mManager->sendMessage(message);
 }
 
-// 删除一路人脸跟踪的视频流
-bool FaceTrackManagerAgent::removeTracker(std::string id)
+// 检查人脸跟踪的状态
+void FaceTrackManagerAgent::checkFaceTrackStatus()
 {
-    LOG_I(mClassName, "remove tracker, id:" << id);
-    return mMapFaceTrack.remove(id);
+    QMap<std::string, QMap<long long, std::shared_ptr<FaceTrackProcessor>>> allProcessor(mMapFaceTrackProcessor);
+    QMapIterator<std::string, QMap<long long, std::shared_ptr<FaceTrackProcessor>>> iterAbstract(allProcessor);
+    while(iterAbstract.hasNext())
+    {
+        iterAbstract.next();
+        QMap<long long, std::shared_ptr<FaceTrackProcessor>> abstractProcessor =  iterAbstract.value();
+        QMapIterator<long long, std::shared_ptr<FaceTrackProcessor>> iterProcessor(abstractProcessor);
+        while(iterProcessor.hasNext())
+        {
+            iterProcessor.next();
+            std::shared_ptr<FaceTrackProcessor> processor = iterProcessor.value();
+            if (processor->isTracking())
+            {
+                continue;
+            }
+
+            // 如果已经跟踪完毕，则取停止跟踪
+            processor->uninit();
+            removeTrackProcessor(iterAbstract.key(), iterProcessor.key());
+        }
+
+        // 本路流没有人脸跟踪任务，则从map中删除
+        if (mMapFaceTrackProcessor.value(iterAbstract.key()).empty())
+        {
+            removeTrackProcessor(iterAbstract.key(), 0);
+        }
+    }
 }
 
-// 删除所有的人脸跟踪的视频流
-void FaceTrackManagerAgent::removeAllTracker()
+// 根据abstrace id,获取process
+QMap<long long, std::shared_ptr<FaceTrackProcessor>> FaceTrackManagerAgent::getTrackProcessByAbstraceId(std::string abstraceId)
 {
-    QMap<std::string, std::shared_ptr<FaceTrack>> allTrackers(mMapFaceTrack);
-    QMapIterator<std::string, std::shared_ptr<FaceTrack>> iter(allTrackers);
-    while (iter.hasNext())
+    QMap<long long, std::shared_ptr<FaceTrackProcessor>> result;
+    return mMapFaceTrackProcessor.value(abstraceId, result);
+}
+
+// 获取人脸跟踪的处理类
+std::shared_ptr<FaceTrackProcessor> FaceTrackManagerAgent::getTrackProcessor(std::string abstractId, long long faceId)
+{
+    std::shared_ptr<FaceTrackProcessor> result;
+    if (mMapFaceTrackProcessor.count(abstractId) > 0 && mMapFaceTrackProcessor.value(abstractId).count(faceId) > 0)
+    {
+       result = mMapFaceTrackProcessor.value(abstractId).value(faceId);
+    }
+    return result;
+}
+
+// 删除人脸跟踪的处理类
+bool FaceTrackManagerAgent::removeTrackProcessor(std::string abstractId, long long faceId)
+{
+    if (mMapFaceTrackProcessor.count(abstractId) < 0)
+    {
+        return false;
+    }
+
+    if (faceId <= 0)
+    {
+        // 如果face id小于等于0，则删除整个abstrace id的processor
+        mMapFaceTrackProcessor.remove(abstractId);
+    }
+    else
+    {
+        // 删除对应的processor
+        mMapFaceTrackProcessor[abstractId].remove(faceId);
+    }
+    return true;
+}
+
+// 删除所有的processor
+void FaceTrackManagerAgent::removeAllTrackProcessor()
+{
+    QMap<std::string, QMap<long long, std::shared_ptr<FaceTrackProcessor>>> allProcessor(mMapFaceTrackProcessor);
+    QMapIterator<std::string, QMap<long long, std::shared_ptr<FaceTrackProcessor>>> iter(allProcessor);
+    while(iter.hasNext())
     {
         iter.next();
-        stopTrack(iter.key());
+        removeTrackProcessor(iter.key(), 0);
     }
 }
 
-// 添加一路人脸跟踪的流
-std::shared_ptr<FaceTrack> FaceTrackManagerAgent::addTracker(std::shared_ptr<TrackCondition> trackInfo)
-{
-    if (mMapFaceTrack.contains(trackInfo->getAbstractId()))
-    {
-        LOG_W(mClassName, "face track already exist, will override it, net track info:" << trackInfo->toString());
-    }
-    std::shared_ptr<FaceTrack> track = std::make_shared<FaceTrack>(this);
-    track->init(trackInfo);
-    mMapFaceTrack[trackInfo->getAbstractId()] = track;
-    LOG_I(mClassName, "add tracker, tracker condition:" << trackInfo->toString());
-    return track;
-}
-
-// 获取人脸跟踪处理类
-std::shared_ptr<FaceTrack> FaceTrackManagerAgent::getTracker(std::string id)
-{
-    std::shared_ptr<FaceTrack> result;
-    return mMapFaceTrack.value(id, result);
-}

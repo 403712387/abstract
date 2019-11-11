@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <QRect>
 #include <QDateTime>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/utility.hpp>

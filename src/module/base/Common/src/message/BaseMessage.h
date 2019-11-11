@@ -43,6 +43,8 @@ enum MessageType
     Track_Start_Message,            // 开始跟踪消息
     Track_Stop_Message,             // 停止跟踪消息
     Face_Info_Message,              // 跟踪出来的人脸信息
+    Face_Track_Stop_Message,        // 停止人脸跟踪
+    Face_Position_Message,          // 人脸位置信息
 };
 
 // 优先级的类型
