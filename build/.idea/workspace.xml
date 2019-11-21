@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="118f920e-b343-4a23-b252-ed84753e7446" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../thirdparty/lib/linux64/cryptopp/libcryptopp.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thirdparty/lib/linux64/libmicrohttpd/libmicrohttpd.so" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BuildService.py" beforeDir="false" afterPath="$PROJECT_DIR$/BuildService.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -153,14 +151,27 @@
         </counts>
       </usages-collector>
     </session>
+    <session id="1899138649">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.open.time.1" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="Python" value="5" />
+        </counts>
+      </usages-collector>
+    </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/BuildService.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
-              <caret line="76" column="88" selection-start-line="76" selection-start-column="88" selection-end-line="76" selection-end-column="88" />
+            <state relative-caret-position="363">
+              <caret line="77" column="160" selection-start-line="77" selection-start-column="160" selection-end-line="77" selection-end-column="160" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -469,10 +480,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3297587" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.33315566" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -523,8 +534,8 @@
     <entry file="file://$PROJECT_DIR$/../../../tool/代码统计/main.py" />
     <entry file="file://$PROJECT_DIR$/BuildService.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="76" column="88" selection-start-line="76" selection-start-column="88" selection-end-line="76" selection-end-column="88" />
+        <state relative-caret-position="363">
+          <caret line="77" column="160" selection-start-line="77" selection-start-column="160" selection-end-line="77" selection-end-column="160" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
