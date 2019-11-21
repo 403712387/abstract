@@ -1,5 +1,4 @@
 #include "IngestInfo.h"
-#include "FaceTrack.h"
 #include "TrackCondition.h"
 #include "FaceInfoMessage.h"
 #include "VideoFrameInfo.h"
@@ -49,6 +48,35 @@ bool FaceTrackManagerAgent::stopTrack(std::string abstractId)
 // 接收到视频帧
 bool FaceTrackManagerAgent::processFacePosition(std::shared_ptr<FacePositionMessage> message)
 {
+    // 获取本路流的所有人脸
+    std::vector<QRect> facePositions = message->getFacePositions();
+    QMap<long long, std::shared_ptr<FaceTrackProcessor>> allProcessor = getTrackProcessByAbstraceId(message->getTrackCondition()->getAbstractId());
+
+    // 更新人脸在新的视频帧中的位置
+    for (std::shared_ptr<FaceTrackProcessor> processor : allProcessor)
+    {
+        processor->receiveFacePositionMessage(message);
+
+        if (!message->isDetectFrame())
+        {
+            return true;
+        }
+
+        // 如果是检测帧,则找出跟踪的出来的人脸和检测出来的哪个人脸重合(这样做的目的是为了查找出视频中新出现的人脸)
+        int index = rectInAllFacePositions(facePositions, processor->getCurrentFacePosition());
+        if (index >= 0)
+        {
+            facePositions.erase(facePositions.begin() + index);
+        }
+    }
+
+    // 新增加的人脸
+    for (QRect &position : facePositions)
+    {
+        std::shared_ptr<FaceTrackProcessor> processor = std::make_shared<FaceTrackProcessor>(this);
+        processor->init(message->getTrackCondition(), message->getVideoFrameInfo(), position);
+        addTrackProcessor(processor);
+    }
 
     return true;
 }
@@ -131,6 +159,24 @@ bool FaceTrackManagerAgent::removeTrackProcessor(std::string abstractId, long lo
     return true;
 }
 
+// 添加跟踪人脸的processor
+bool FaceTrackManagerAgent::addTrackProcessor(std::shared_ptr<FaceTrackProcessor> processor)
+{
+    std::string abstractId = processor->getTrackCondition()->getAbstractId();
+    if (mMapFaceTrackProcessor.count(abstractId) > 0)
+    {
+        mMapFaceTrackProcessor[abstractId][processor->getFaceId()] = processor;
+    }
+    else
+    {
+        QMap<long long, std::shared_ptr<FaceTrackProcessor>> mapTrackProcess;
+        mapTrackProcess[processor->getFaceId()] = processor;
+        mMapFaceTrackProcessor[abstractId] = mapTrackProcess;
+    }
+    LOG_I(mClassName, "add face track processor, abstract id:" << abstractId << ", face id:" << processor->getFaceId() << ", track condition:" << processor->getTrackCondition()->toString());
+    return true;
+}
+
 // 删除所有的processor
 void FaceTrackManagerAgent::removeAllTrackProcessor()
 {
@@ -143,3 +189,35 @@ void FaceTrackManagerAgent::removeAllTrackProcessor()
     }
 }
 
+// 查找rect 在所有的人脸位置中的索引
+int FaceTrackManagerAgent::rectInAllFacePositions(std::vector<QRect> &allFacePosition, QRect rect)
+{
+    int index = -1;
+    int coincideArea = 0;
+    for (int i = 0; i < allFacePosition.size(); ++i)
+    {
+        // 找出重合的区域
+        QRect position = allFacePosition.at(i);
+        QRect coincideRect = position.intersected(rect);
+        if (!coincideRect.isValid())
+        {
+            continue;
+        }
+
+        // 找出最大的重合区域
+        int coincide = (coincideRect.width() * coincideRect.height() * 100) / (rect.width() * rect.height());
+        if (coincide > coincideArea)
+        {
+            coincideArea = coincide;
+            index = i;
+        }
+    }
+
+    // 重合的区域是否达到了阈值，如果没有达到，则认为没有找到
+    if (mCoincideAreaThreshold < coincideArea)
+    {
+        index = -1;
+    }
+
+    return index;
+}

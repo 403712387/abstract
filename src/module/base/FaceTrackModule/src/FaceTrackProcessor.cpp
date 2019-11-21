@@ -72,6 +72,12 @@ void FaceTrackProcessor::receiveFacePositionMessage(std::shared_ptr<BaseMessage>
     mMessageQueue.push(message);
 }
 
+// 获取当前的人脸位置
+QRect FaceTrackProcessor::getCurrentFacePosition()
+{
+    return mCurrentFacePosition;
+}
+
 // 人脸位置检测的线程
 std::shared_ptr<Error> FaceTrackProcessor::workThread()
 {

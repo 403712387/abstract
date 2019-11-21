@@ -44,13 +44,20 @@ private:
     // 删除人脸跟踪的处理类
     bool removeTrackProcessor(std::string abstractId, long long faceId);
 
+    // 添加跟踪人脸的processor
+    bool addTrackProcessor(std::shared_ptr<FaceTrackProcessor> processor);
+
     // 删除所有的processor
     void removeAllTrackProcessor();
+
+    // 查找rect 在所有的人脸位置中的索引
+    int rectInAllFacePositions(std::vector<QRect> &allFacePosition, QRect rect);
 
 private:
     std::string             mClassName = "FaceTrackManagerAgent";
     FaceTrackManager        *mManager = NULL;
 
+    int                     mCoincideAreaThreshold = 60;    // 重合面积的阈值，如果重合面积大于阈值，则认为是同一个人脸
     QMap<std::string, QMap<long long, std::shared_ptr<FaceTrackProcessor>>>  mMapFaceTrackProcessor;    // 跟踪的处理类,QMap<abstractID, QMap<FaceId, processor>>
 };
 

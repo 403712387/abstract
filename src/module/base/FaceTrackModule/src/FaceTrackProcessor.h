@@ -40,6 +40,9 @@ public:
     // 接收到人脸位置消息
     void receiveFacePositionMessage(std::shared_ptr<BaseMessage> message);
 
+    // 获取当前的人脸位置
+    QRect getCurrentFacePosition();
+
 protected:
     // 人脸位置检测的线程
     virtual std::shared_ptr<Error> workThread();
