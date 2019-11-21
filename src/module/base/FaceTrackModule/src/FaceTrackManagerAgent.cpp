@@ -59,7 +59,7 @@ bool FaceTrackManagerAgent::processFacePosition(std::shared_ptr<FacePositionMess
 
         if (!message->isDetectFrame())
         {
-            return true;
+            continue;
         }
 
         // 如果是检测帧,则找出跟踪的出来的人脸和检测出来的哪个人脸重合(这样做的目的是为了查找出视频中新出现的人脸)
@@ -69,6 +69,14 @@ bool FaceTrackManagerAgent::processFacePosition(std::shared_ptr<FacePositionMess
             facePositions.erase(facePositions.begin() + index);
         }
     }
+
+    if (!message->isDetectFrame())
+    {
+        return true;
+    }
+
+    // 检查跟踪的状态
+    checkFaceTrackStatus(allProcessor);
 
     // 新增加的人脸
     for (QRect &position : facePositions)
@@ -96,27 +104,31 @@ void FaceTrackManagerAgent::checkFaceTrackStatus()
     while(iterAbstract.hasNext())
     {
         iterAbstract.next();
-        QMap<long long, std::shared_ptr<FaceTrackProcessor>> abstractProcessor =  iterAbstract.value();
-        QMapIterator<long long, std::shared_ptr<FaceTrackProcessor>> iterProcessor(abstractProcessor);
-        while(iterProcessor.hasNext())
-        {
-            iterProcessor.next();
-            std::shared_ptr<FaceTrackProcessor> processor = iterProcessor.value();
-            if (processor->isTracking())
-            {
-                continue;
-            }
-
-            // 如果已经跟踪完毕，则取停止跟踪
-            processor->uninit();
-            removeTrackProcessor(iterAbstract.key(), iterProcessor.key());
-        }
+        checkFaceTrackStatus(iterAbstract.value());
 
         // 本路流没有人脸跟踪任务，则从map中删除
         if (mMapFaceTrackProcessor.value(iterAbstract.key()).empty())
         {
             removeTrackProcessor(iterAbstract.key(), 0);
         }
+    }
+}
+
+void FaceTrackManagerAgent::checkFaceTrackStatus(const  QMap<long long, std::shared_ptr<FaceTrackProcessor>> &abstractProcessors)
+{
+    QMapIterator<long long, std::shared_ptr<FaceTrackProcessor>> iterProcessor(abstractProcessors);
+    while(iterProcessor.hasNext())
+    {
+        iterProcessor.next();
+        std::shared_ptr<FaceTrackProcessor> processor = iterProcessor.value();
+        if (processor->isTracking())
+        {
+            continue;
+        }
+
+        // 如果已经跟踪完毕，则取停止跟踪
+        processor->uninit();
+        removeTrackProcessor(processor->getTrackCondition()->getAbstractId(), processor->getFaceId());
     }
 }
 

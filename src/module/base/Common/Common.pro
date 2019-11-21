@@ -1,6 +1,6 @@
 QT       += core
 QT       -= gui
-CONFIG += c++11
+CONFIG += c++11  plugin
 
 TARGET = Common
 TEMPLATE = lib

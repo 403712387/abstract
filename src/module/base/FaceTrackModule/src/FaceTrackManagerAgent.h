@@ -33,6 +33,7 @@ public:
 
     // 检查人脸跟踪的状态
     void checkFaceTrackStatus();
+    void checkFaceTrackStatus(const QMap<long long, std::shared_ptr<FaceTrackProcessor>> &abstractProcessors);
 
 private:
     // 根据abstrace id,获取process

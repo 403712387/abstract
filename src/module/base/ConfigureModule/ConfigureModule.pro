@@ -1,6 +1,6 @@
 QT       += core
 QT       -= gui
-CONFIG += c++11
+CONFIG += c++11  plugin
 TARGET = ConfigureModule
 TEMPLATE = lib
 DESTDIR = ../../../bin/abstract/lib/module
