@@ -11,7 +11,7 @@ FaceTrackProcessor::FaceTrackProcessor(FaceTrackManagerAgent *agent)
     :ThreadHandler("FaceTrack")
 {
     mManagerAgent = agent;
-    mFaceId = getFaceId();
+    mFaceId = TrackCommon::getFaceId();
 }
 
 // 初始化
