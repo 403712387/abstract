@@ -84,7 +84,7 @@ std::shared_ptr<Error> FaceTrackProcessor::workThread()
     LOG_I(mClassName, "begin face track processor thread, track info:" << mTrackCondition->toString() << ", face id:" << mFaceId);
     while(!isStop() || !mMessageQueue.empty())
     {
-        std::shared_ptr<BaseMessage> message = mMessageQueue.popExpiration(40);
+        std::shared_ptr<BaseMessage> message = mMessageQueue.popExpiration(400);
         if (NULL == message.get())
         {
             // 检查高质量人脸队列
