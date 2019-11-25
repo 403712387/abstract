@@ -208,7 +208,7 @@ void FaceTrackManagerAgent::removeAllTrackProcessor()
     while(iter.hasNext())
     {
         iter.next();
-        removeTrackProcessor(iter.key(), 0);
+        stopTrack(iter.key());
     }
 }
 
