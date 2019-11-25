@@ -168,6 +168,7 @@ bool FaceTrackManagerAgent::removeTrackProcessor(std::string abstractId, long lo
         // 删除对应的processor
         mMapFaceTrackProcessor[abstractId].remove(faceId);
     }
+    LOG_I(mClassName, "remove face track process, abstract id:" << abstractId << ", face id:" << faceId);
     return true;
 }
 
