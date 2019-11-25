@@ -91,7 +91,7 @@ std::shared_ptr<Error> FaceTrackProcessor::workThread()
 #if 1
             LOG_I(mClassName, "message is NULL, begin check high face list, face id:" << mFaceId);
 #endif
-            checkHighQualityFaceList();
+            //checkHighQualityFaceList();
 #if 1
             LOG_I(mClassName, "message is NULL, end check high face list, face id:" << mFaceId);
 #endif
