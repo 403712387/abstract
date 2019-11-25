@@ -207,7 +207,7 @@ void FFmpegIngestManagerAgent::removeAllIngestProcessor()
     while (iter.hasNext())
     {
         iter.next();
-        removeIngestProcessor(iter.key());
+        processStopIngest(iter.value()->getIngestInfo());
     }
 }
 

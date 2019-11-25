@@ -81,7 +81,7 @@ QRect FaceTrackProcessor::getCurrentFacePosition()
 // 人脸位置检测的线程
 std::shared_ptr<Error> FaceTrackProcessor::workThread()
 {
-    LOG_I(mClassName, "begin face position processor thread, track info:" << mTrackCondition->toString() << ", face id:" << mFaceId);
+    LOG_I(mClassName, "begin face track processor thread, track info:" << mTrackCondition->toString() << ", face id:" << mFaceId);
     while(!isStop() || !mMessageQueue.empty())
     {
         std::shared_ptr<BaseMessage> message = mMessageQueue.popExpiration(10);
