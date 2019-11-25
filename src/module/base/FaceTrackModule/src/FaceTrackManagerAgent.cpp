@@ -7,6 +7,7 @@
 #include "FacePositionMessage.h"
 #include "FaceTrackManagerAgent.h"
 #include "IngestExceptionMessage.h"
+#include "opencv2/opencv.hpp"
 
 FaceTrackManagerAgent::FaceTrackManagerAgent(FaceTrackManager *manager)
 {
@@ -16,6 +17,15 @@ FaceTrackManagerAgent::FaceTrackManagerAgent(FaceTrackManager *manager)
 // 初始化
 bool FaceTrackManagerAgent::init()
 {
+#if 1
+    bool isUse = cv::useOptimized();
+    LOG_I(mClassName, isUse ? "use optimization\n" : "not use optimization");
+    LOG_I(mClassName, "getNumThreads" << cv::getNumThreads() << ", getThreadNum:" << cv::getThreadNum());
+    cv::setNumThreads(0);
+    LOG_I(mClassName, "getNumThreads" << cv::getNumThreads() << ", getThreadNum:" << cv::getThreadNum());
+    LOG_I(mClassName, "cpu feature:" << cv::getCPUFeaturesLine().c_str());
+    LOG_I(mClassName, "build inforamtion:" << cv::getBuildInformation().c_str());
+#endif
     return true;
 }
 
