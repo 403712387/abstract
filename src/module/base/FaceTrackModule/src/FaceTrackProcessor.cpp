@@ -20,6 +20,7 @@ bool FaceTrackProcessor::init(std::shared_ptr<TrackCondition> trackCondition, st
     LOG_I(mClassName, "begin face track processor, track info:" << trackCondition->toString() << ", face id:" << mFaceId);
 
     // 创建跟踪算法
+    mTrackCondition = trackCondition;
     mTrackAlgorithm = createTrackerByName(mTrackAlgorithmName);
     if (NULL == mTrackAlgorithm.get())
     {
@@ -34,7 +35,6 @@ bool FaceTrackProcessor::init(std::shared_ptr<TrackCondition> trackCondition, st
     updateHighQualityFaceList(videoFrame);
 
     // 启动跟踪线程
-    mTrackCondition = trackCondition;
     mHighQualityFaceListSize = trackCondition->getAbstractFaceCount() * 2 + 2;
     mTrackThread = std::make_shared<Thread>(this);
     mTrackThread->start();
