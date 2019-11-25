@@ -22,7 +22,7 @@ std::pair<std::shared_ptr<VideoFormat>, std::shared_ptr<Error>> IngestProcessor:
     av_dict_set(&option, "rtsp_transport", "tcp", 0);
 
     // 设置超时时间(单位是微秒)
-    av_dict_set(&option, "stimeout", "2000000", 0);
+    av_dict_set(&option, "stimeout", "20000000", 0);
 
     mFormatContext = avformat_alloc_context();
 
@@ -78,18 +78,20 @@ std::pair<std::shared_ptr<VideoFormat>, std::shared_ptr<Error>> IngestProcessor:
         return result;
     }
     mVideoCodecContext = avcodec_alloc_context3(mVideoCodec);
+
+    // 设置参数，防止解析本地文件的时候失败
+    if (Common::isLocalFile(mIngestInfo->getStreamUrl()))
+    {
+        avcodec_parameters_to_context(mVideoCodecContext, mVideoStream->codecpar);
+        mVideoCodecContext->framerate = mVideoStream->avg_frame_rate;
+    }
+
     ret = avcodec_open2(mVideoCodecContext, mVideoCodec, NULL);
     if (ret < 0)
     {
         LOG_E(mClassName, "open codecer fail, reason:" << getErrorReason(ret));
         result.second = Common::getError("open codecer fail");
         return result;
-    }
-
-    // 设置参数，防止解析本地文件的时候失败
-    if (Common::isLocalFile(mIngestInfo->getStreamUrl()))
-    {
-        avcodec_parameters_to_context(mVideoCodecContext, mVideoStream->codecpar);
     }
 
     // 初始化视频信息
@@ -161,13 +163,6 @@ bool IngestProcessor::initVideoFormat()
 {
     if (NULL == mVideoStream || NULL != mVideoFormat.get())
     {
-        return false;
-    }
-
-    // 暂时只支持h264
-    if (AV_CODEC_ID_H264 != mVideoStream->codecpar->codec_id && AV_CODEC_ID_HEVC != mVideoStream->codecpar->codec_id)
-    {
-        LOG_E(mClassName, "not support video format, codec id:" << mVideoStream->codecpar->codec_id);
         return false;
     }
 

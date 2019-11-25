@@ -50,8 +50,8 @@ protected:
 private:
     std::string         mClassName = "IngestProcessor";
     FFmpegIngestManagerAgent *mManagerAgent = NULL;
-    std::shared_ptr<VideoFormat>        mVideoFormat;
-    std::shared_ptr<IngestInfo>   mIngestInfo;
+    std::shared_ptr<VideoFormat>    mVideoFormat;
+    std::shared_ptr<IngestInfo>     mIngestInfo;
     std::shared_ptr<Thread> mIngestThread;      // 拉取视频流的线程
     long long           mFrameIndex = 0;        // 视频帧的index
 
