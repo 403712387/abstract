@@ -37,6 +37,7 @@ void FFmpegIngestManager::beginWork()
 void FFmpegIngestManager::uninit()
 {
     LOG_I(mClassName, "begin uninit");
+    mAgent->uninit();
     BaseProcess::uninit();
     LOG_I(mClassName, "end uninit");
 }

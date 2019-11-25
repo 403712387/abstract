@@ -69,6 +69,7 @@ bool FFmpegIngestManagerAgent::init()
 //  反初始化
 void FFmpegIngestManagerAgent::uninit()
 {
+    removeAllIngestProcessor();
     uninitFFmpeg();
 }
 
@@ -190,6 +191,24 @@ bool FFmpegIngestManagerAgent::removeIngestProcessor(long long requestId)
     mMapProcessor.remove(requestId);
     LOG_I(mClassName, "remove ingest processor, request id:" << requestId);
     return true;
+}
+
+// 停止所有的拉流请求
+void FFmpegIngestManagerAgent::removeAllIngestProcessor()
+{
+    QMap<long long, std::shared_ptr<IngestProcessor>> mapProcessor;
+    {
+        std::unique_lock<std::mutex> autoLocker(mMapProcessorMutex);
+        mapProcessor = mMapProcessor;
+    }
+
+    // 删除所有拉流请求
+    QMapIterator<long long, std::shared_ptr<IngestProcessor>> iter(mapProcessor);
+    while (iter.hasNext())
+    {
+        iter.next();
+        removeIngestProcessor(iter.key());
+    }
 }
 
 // 根据拉流请求，查找对应的processor

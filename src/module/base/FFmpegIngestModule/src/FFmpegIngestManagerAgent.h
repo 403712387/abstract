@@ -47,6 +47,9 @@ private:
     // 删除一个拉流请求
     bool removeIngestProcessor(long long requestId);
 
+    // 停止所有的拉流请求
+    void removeAllIngestProcessor();
+
     // 根据拉流请求，查找对应的processor
     std::shared_ptr<IngestProcessor> getIngestProcessor(long long requestId);
 
