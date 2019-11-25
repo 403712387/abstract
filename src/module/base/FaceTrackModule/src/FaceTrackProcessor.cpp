@@ -29,7 +29,7 @@ bool FaceTrackProcessor::init(std::shared_ptr<TrackCondition> trackCondition, st
     }
 
     // 初始化跟踪位置
-    mTrackAlgorithm->init(*(videoFrame->getFrameMat()), cv::Rect2d(face.left(), face.top(), face.width(), face.top()));
+    mTrackAlgorithm->init(*(videoFrame->getFrameMat()), cv::Rect2d(face.left(), face.top(), face.width(), face.height()));
     mCurrentFacePosition = face;
     ++mReceiveVideoFrameCount;
     updateHighQualityFaceList(videoFrame);

@@ -64,7 +64,7 @@ private:
     int                             mFaceDetectInterval = 24;       // 隔多少帧进行一次人脸检测
 
     unsigned char                   *mFaceDetectBuffer = NULL;       // 人脸检测的结果
-    int                             mMinFaceWidth = 32;     // 最小的人脸大小，如果框的区域小于这个人脸，则忽略
+    int                             mMinFaceWidth = 24;     // 最小的人脸大小，如果框的区域小于这个人脸，则忽略
     int                             mMinConfidence = 50;   // 低于此置信度的则认为不是人脸
     int                             mImageCompressRatio = 1;    // 检测人脸位置的时候把图片压缩一下，加快检测速度
 };
