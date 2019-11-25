@@ -84,39 +84,22 @@ std::shared_ptr<Error> FaceTrackProcessor::workThread()
     LOG_I(mClassName, "begin face track processor thread, track info:" << mTrackCondition->toString() << ", face id:" << mFaceId);
     while(!isStop() || !mMessageQueue.empty())
     {
-        std::shared_ptr<BaseMessage> message = mMessageQueue.popExpiration(400);
+        std::shared_ptr<BaseMessage> message = mMessageQueue.popExpiration(20);
         if (NULL == message.get())
         {
             // 检查高质量人脸队列
-#if 1
-            LOG_I(mClassName, "message is NULL, begin check high face list, face id:" << mFaceId);
-#endif
-            //checkHighQualityFaceList();
-#if 1
-            LOG_I(mClassName, "message is NULL, end check high face list, face id:" << mFaceId);
-#endif
+            checkHighQualityFaceList();
             continue;
         }
 
         if (Face_Position_Message == message->getMessageType())
         {
-#if 1
-            LOG_I(mClassName, "begin process video frame, face id:" << mFaceId);
-#endif
             // 跟踪人脸
             std::shared_ptr<FacePositionMessage> positionMessage = std::dynamic_pointer_cast<FacePositionMessage>(message);
             mIsTracking = processVideoFrame(positionMessage->getVideoFrameInfo(), positionMessage->getFacePositions(), positionMessage->isDetectFrame());
-#if 1
-            LOG_I(mClassName, "end process video frame, face id:" << mFaceId);
-#endif
+
             // 选择跟踪出来的人脸
-#if 1
-            LOG_I(mClassName, "begin check high face list, face id:" << mFaceId);
-#endif
             checkHighQualityFaceList();
-#if 1
-            LOG_I(mClassName, "begin check high face list, face id:" << mFaceId);
-#endif
         }
         else
         {
