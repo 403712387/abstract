@@ -18,6 +18,7 @@ INCLUDEPATH += \
             ../../module/base/CoreModule/src \
             ../../module/base/HttpModule/src \
             ../../module/base/FFmpegIngestModule/src \
+            ../../module/base/FacePositionModule/src \
             ../../module/base/FaceTrackModule/src \
             ../../module/base/ServiceStatusModule/src \
             ../../module/base/ConfigureModule/src \
@@ -26,14 +27,14 @@ INCLUDEPATH += \
 
 win32 {
 LIBS += -L../../bin/abstract/lib/module -lCommon -lCoreModule -lHttpModule -lServiceStatusModule -lConfigureModule \
-        -lFFmpegIngestModule -lFaceTrackModule -lAbstractModule \
+        -lFFmpegIngestModule -lFaceTrackModule -lFacePositionModule -lAbstractModule \
         -L../../../thirdparty/lib/windows64/Qt -lQt5Core \
         -L../../../thirdparty/lib/windows64/jsoncpp  -ljsoncpp
 }
 
 unix {
 LIBS += -L../../bin/abstract/lib/module -lCommon -lCoreModule -lHttpModule -lServiceStatusModule -lConfigureModule \
-        -lFFmpegIngestModule -lFaceTrackModule -lAbstractModule \
+        -lFFmpegIngestModule -lFaceTrackModule -lFacePositionModule -lAbstractModule \
         -L../../../thirdparty/lib/linux64/jsoncpp  -ljsoncpp \
         -L../../../thirdparty/lib/linux64/log4cplus -llog4cplus \
         -L../../../thirdparty/lib/linux64/facedetection -lfacedetection \

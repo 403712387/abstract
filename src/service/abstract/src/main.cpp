@@ -9,6 +9,7 @@
 #include "FaceTrackManager.h"
 #include "ServiceStatusModule.h"
 #include "FFmpegIngestManager.h"
+#include "FacePositionManager.h"
 
 int main(int argc, char *argv[])
 {
@@ -37,6 +38,7 @@ int main(int argc, char *argv[])
     FaceTrackManager trackFaceManager(&messageRoute);
     ServiceStatusModule serviceStatusManager(&messageRoute);
     FFmpegIngestManager ffmageIngestManager(&messageRoute);
+    FacePositionManager facePositionManager(&messageRoute);
     AbstractManager abstraceManager(&messageRoute);
     messageRoute.beginWork();
 
