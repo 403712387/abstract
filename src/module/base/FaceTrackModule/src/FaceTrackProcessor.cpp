@@ -88,18 +88,35 @@ std::shared_ptr<Error> FaceTrackProcessor::workThread()
         if (NULL == message.get())
         {
             // 检查高质量人脸队列
+#if 1
+            LOG_I(mClassName, "message is NULL, begin check high face list, face id:" << mFaceId);
+#endif
             checkHighQualityFaceList();
+#if 1
+            LOG_I(mClassName, "message is NULL, end check high face list, face id:" << mFaceId);
+#endif
             continue;
         }
 
         if (Face_Position_Message == message->getMessageType())
         {
+#if 1
+            LOG_I(mClassName, "begin process video frame, face id:" << mFaceId);
+#endif
             // 跟踪人脸
             std::shared_ptr<FacePositionMessage> positionMessage = std::dynamic_pointer_cast<FacePositionMessage>(message);
             mIsTracking = processVideoFrame(positionMessage->getVideoFrameInfo(), positionMessage->getFacePositions(), positionMessage->isDetectFrame());
-
+#if 1
+            LOG_I(mClassName, "end process video frame, face id:" << mFaceId);
+#endif
             // 选择跟踪出来的人脸
+#if 1
+            LOG_I(mClassName, "begin check high face list, face id:" << mFaceId);
+#endif
             checkHighQualityFaceList();
+#if 1
+            LOG_I(mClassName, "begin check high face list, face id:" << mFaceId);
+#endif
         }
         else
         {
